@@ -1,1 +1,1 @@
-SELECT 'i am awesome DAD';
+CREATE DATABASE talently;
