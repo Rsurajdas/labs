@@ -15,4 +15,13 @@
 -- DELETE FROM users WHERE full_name = 'Subhankar Kumar';
 -- DELETE FROM users WHERE full_name = 'abc';
 
-SELECT * FROM users;
+-- SELECT * FROM users;
+
+-- CREATE TABLE employers (
+--     company_name VARCHAR(200),
+--     company_address VARCHAR(350),
+--     yearly_revenue NUMERIC(10,2),
+--     is_hiring BOOLEAN
+-- );
+
+SELECT * FROM employers;
