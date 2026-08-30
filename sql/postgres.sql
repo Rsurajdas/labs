@@ -14,3 +14,5 @@
 
 -- DELETE FROM users WHERE full_name = 'Subhankar Kumar';
 -- DELETE FROM users WHERE full_name = 'abc';
+
+SELECT * FROM users;
