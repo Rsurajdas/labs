@@ -1,3 +1,5 @@
+const DUBAI_GOAL: bool = true; // With `const`, you must explicitly specify the variable's type.
+
 fn main() {
     let age = 32;
 
