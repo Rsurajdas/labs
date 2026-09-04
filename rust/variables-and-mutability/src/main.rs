@@ -1,3 +1,4 @@
+type Meters = i32; // Type aliases allow you to create a new name for an existing type, improving code readability.
 const DUBAI_GOAL: bool = true; // With `const`, you must explicitly specify the variable's type.
 
 fn main() {
@@ -17,4 +18,12 @@ fn main() {
         let age = 31;
         println!("{}", age)
     }
+
+    if DUBAI_GOAL {
+        println!("I will achieve my goal in Dubai!");
+    }
+
+    let mile_rage_length: Meters = 1600;
+
+    println!("The length of a mile in meters is: {}", mile_rage_length);
 }
