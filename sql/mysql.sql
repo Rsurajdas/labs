@@ -12,12 +12,12 @@
 
 -- SELECT * FROM users;
 
-CREATE TABLE employers (
-    company_name VARCHAR(200),
-    company_address VARCHAR(350),
-    yearly_revenue NUMERIC(10,2),
-    is_hiring BOOLEAN
-);
+-- CREATE TABLE employers (
+--     company_name VARCHAR(200),
+--     company_address VARCHAR(350),
+--     yearly_revenue NUMERIC(10,2),
+--     is_hiring BOOLEAN
+-- );
 
 -- INSERT INTO employers VALUES ('Google', '1600 Amphitheatre Parkway, Mountain View, CA 94043, USA', 25763700.00, true),
 -- ('Microsoft', 'One Microsoft Way, Redmond, WA 98052-6399, USA', 16808800.00, true),
@@ -44,4 +44,10 @@ CREATE TABLE employers (
 -- ('Subhankar Kumar', 'Microsoft', 'Hi, I would like to know more about the software engineer position at Microsoft.', '2023-10-02 14:30:00'),
 -- ('abc', 'Apple', 'Good day, I am looking for opportunities at Apple. Could you share any available positions?', '2023-10-03 09:45:00');
 
-SELECT * FROM conversations;
+-- SELECT * FROM conversations;
+
+ALTER TABLE employers
+MODIFY COLUMN is_hiring BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE employers
+MODIFY COLUMN yearly_revenue NUMERIC(20,2);
