@@ -46,8 +46,12 @@
 
 -- SELECT * FROM conversations;
 
-ALTER TABLE employers
-MODIFY COLUMN is_hiring BOOLEAN DEFAULT FALSE;
+-- ALTER TABLE employers
+-- MODIFY COLUMN is_hiring BOOLEAN DEFAULT FALSE;
 
-ALTER TABLE employers
-MODIFY COLUMN yearly_revenue NUMERIC(20,2);
+-- ALTER TABLE employers
+-- MODIFY COLUMN yearly_revenue NUMERIC(20,2);
+
+-- ALTER TABLE users
+-- MODIFY COLUMN full_name VARCHAR(100) NOT NULL,
+-- MODIFY COLUMN current_status ENUM("employed", "self-employed", "unemployed") NOT NULL;

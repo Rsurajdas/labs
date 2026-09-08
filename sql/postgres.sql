@@ -45,8 +45,12 @@
 
 -- SELECT * FROM conversations;
 
-ALTER TABLE employers
-ALTER COLUMN is_hiring SET DEFAULT FALSE;
+-- ALTER TABLE employers
+-- ALTER COLUMN is_hiring SET DEFAULT FALSE;
 
-ALTER TABLE employers
-ALTER COLUMN yearly_revenue SET DATA TYPE NUMERIC(20,2);
+-- ALTER TABLE employers
+-- ALTER COLUMN yearly_revenue SET DATA TYPE NUMERIC(20,2);
+
+-- ALTER TABLE users
+-- ALTER COLUMN full_name SET NOT NULL,
+-- ALTER COLUMN current_status SET NOT NULL;
