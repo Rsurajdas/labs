@@ -55,3 +55,10 @@
 -- ALTER TABLE users
 -- MODIFY COLUMN full_name VARCHAR(100) NOT NULL,
 -- MODIFY COLUMN current_status ENUM("employed", "self-employed", "unemployed") NOT NULL;
+
+-- UPDATE users
+-- SET yearly_salary = NULL
+-- WHERE full_name = 'abc';
+
+ALTER TABLE users
+ADD CONSTRAINT check_yearly_salary CHECK (yearly_salary > 0);

@@ -54,3 +54,10 @@
 -- ALTER TABLE users
 -- ALTER COLUMN full_name SET NOT NULL,
 -- ALTER COLUMN current_status SET NOT NULL;
+
+-- UPDATE users
+-- SET yearly_salary = NULL
+-- WHERE full_name = 'abc';
+
+ALTER TABLE users
+ADD CONSTRAINT check_yearly_salary CHECK (yearly_salary > 0);
