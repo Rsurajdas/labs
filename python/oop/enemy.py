@@ -6,3 +6,9 @@ class Enemy:
 
     def info(self):
         return f"Type: {self.type}, Health: {self.health}, Damage: {self.damage}"
+
+    def attack(self):
+        return f"{self.type} attacks for {self.damage} damage!"
+
+    def move_towards(self, target):
+        return f"{self.type} moves towards {target.type}!"
