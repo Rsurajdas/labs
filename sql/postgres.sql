@@ -79,3 +79,10 @@ ADD CONSTRAINT check_yearly_revenue CHECK (yearly_revenue > 0);
 
 ALTER TABLE employers
 ALTER COLUMN company_name SET NOT NULL;
+
+ALTER TABLE conversations
+ALTER COLUMN message SET NOT NULL,
+DROP COLUMN user_name,
+DROP COLUMN employer_name,
+ADD COLUMN user_id INT REFERENCES users(id),
+ADD COLUMN employer_id INT REFERENCES employers(id);

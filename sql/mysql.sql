@@ -79,3 +79,10 @@ MODIFY COLUMN yearly_revenue FLOAT CHECK (yearly_revenue > 0);
 
 ALTER TABLE employers
 MODIFY COLUMN company_name VARCHAR(200) NOT NULL;
+
+ALTER TABLE conversations
+MODIFY COLUMN message TEXT NOT NULL,
+DROP COLUMN user_name,
+DROP COLUMN employer_name,
+ADD COLUMN user_id INT REFERENCES users(id),
+ADD COLUMN employer_id INT REFERENCES employers(id);
