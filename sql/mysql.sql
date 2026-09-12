@@ -63,4 +63,13 @@
 -- ALTER TABLE users
 -- ADD CONSTRAINT check_yearly_salary CHECK (yearly_salary > 0);
 
-INSERT INTO users VALUES ('John Doe', 0, 'unemployed');
+-- INSERT INTO users VALUES ('John Doe', 0, 'unemployed');
+
+ALTER TABLE users
+ADD COLUMN id INT PRIMARY KEY AUTO_INCREMENT;
+
+ALTER TABLE employers
+ADD COLUMN id INT PRIMARY KEY AUTO_INCREMENT;
+
+ALTER TABLE conversations
+ADD COLUMN id INT PRIMARY KEY AUTO_INCREMENT;

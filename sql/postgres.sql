@@ -62,4 +62,13 @@
 -- ALTER TABLE users
 -- ADD CONSTRAINT check_yearly_salary CHECK (yearly_salary > 0);
 
-INSERT INTO users VALUES ('John Doe', 0, 'unemployed');
+-- INSERT INTO users VALUES ('John Doe', 0, 'unemployed');
+
+ALTER TABLE users
+ADD COLUMN id SERIAL PRIMARY KEY;
+
+ALTER TABLE employers
+ADD COLUMN id SERIAL PRIMARY KEY;
+
+ALTER TABLE conversations
+ADD COLUMN id SERIAL PRIMARY KEY;
