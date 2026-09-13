@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 from data import *
 
 app = FastAPI()
@@ -19,3 +19,15 @@ async def get_book_by_id(id: int):
             return {"status": "Success", "data": book}
         
     return {"status": "Failed", "message": "Book not found!"}
+
+@app.post("/books")
+async def create_book(book=Body()):
+    if not book.get("id"):
+        return {"status": "Fialed", "message": "Books must have a unique `id`"}
+    if not book.get("title"):
+        return {"status": "Fialed", "message": "Books must have a `title`"}
+
+    BOOKS.append(book)
+    return {"status": "Success", "data": book, "message": "Book successfully added"}
+
+    
