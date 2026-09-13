@@ -18,6 +18,7 @@ def battle(e: Enemy, target):
         e.info(),
         e.attack(),
         e.move__towards(target),
+        e.weapon__attack(),
         e.special__attack(target)
     ])
 
