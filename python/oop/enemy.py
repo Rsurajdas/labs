@@ -19,5 +19,5 @@ class Enemy:
     def attack(self):
         return f"{self.__type} attacks for {self.__damage} damage!"
 
-    def move_towards(self, target):
+    def move__towards(self, target):
         return f"{self.__type} moves towards {target.__type}!"

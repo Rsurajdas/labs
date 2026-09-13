@@ -12,7 +12,9 @@ orge = Orge(250, 15)
 def battle(e: Enemy, target):
     return "\n".join([
         e.info(),
-        e.attack()
+        e.attack(),
+        e.move__towards(target),
+        e.special__attack(target)
     ])
 
 enemys: Enemy = [zombie, orge]
