@@ -41,4 +41,13 @@ async def update_book_by_id(id: int, body=Body()):
         
     return {"status": "failed", "message": "Book not found!"}
 
+@app.delete("/books/{id}")
+async def delete_book_by_id(id: int):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get("id") == id:
+            BOOKS.pop(i)
+            return {"status": "success", "message": "Book removed successfully"}
+        
+    return {"status": "failed", "message": "Book not found!"}
+
     
