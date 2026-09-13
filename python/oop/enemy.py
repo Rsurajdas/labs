@@ -4,7 +4,7 @@ class Enemy:
         self.__health: int = health
         self.__damage: int = damage
 
-    def get_type(self):
+    def get__type(self):
         return self.__type
 
     def get__health(self):

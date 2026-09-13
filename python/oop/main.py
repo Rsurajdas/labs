@@ -1,10 +1,12 @@
-from enemy import *
+from zombie import *
+from orge import *
 
-zombie = Enemy("Zombie", 100, 5)
-orge = Enemy("Orge", 250, 15)
+zombie = Zombie(100, 5)
+orge = Orge(250, 15)
 
 # print(zombie.__type)  # This will raise an AttributeError because __type is private
-print(zombie.get_type())  # This will work because get_type() is a public method
+print(zombie.get__type())  # This will work because get_type() is a public method
+print(orge.get__type())  # This will work because get_type() is a public method
 
 print(zombie.info())
 print(orge.info())
@@ -14,3 +16,6 @@ print(orge.attack())
 
 print(zombie.move_towards(orge))
 print(orge.move_towards(zombie))
+
+print(zombie.special__attack(orge))
+print(orge.special__attack(zombie))
