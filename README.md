@@ -1,4 +1,4 @@
-# labs
+# Labs
 
 My personal playground for learning.
 
@@ -19,13 +19,13 @@ labs/
 └── sql/         # SQL queries and database notes
 ```
 
-| Directory | What's in it |
-|-----------|--------------|
-| [`js/`](./js) | JavaScript language features, patterns, and browser APIs |
-| [`python/`](./python) | Python syntax, standard library, and scripting practice |
-| [`rust/`](./rust) | Rust fundamentals: ownership, borrowing, and the type system |
-| [`shopify/`](./shopify) | Shopify theme development and Liquid templating |
-| [`sql/`](./sql) | SQL queries, joins, indexing, and schema design |
+| Directory               | What's in it                                                 |
+| ----------------------- | ------------------------------------------------------------ |
+| [`js/`](./js)           | JavaScript language features, patterns, and browser APIs     |
+| [`python/`](./python)   | Python syntax, standard library, and scripting practice      |
+| [`rust/`](./rust)       | Rust fundamentals: ownership, borrowing, and the type system |
+| [`shopify/`](./shopify) | Shopify theme development and Liquid templating              |
+| [`sql/`](./sql)         | SQL queries, joins, indexing, and schema design              |
 
 ## Conventions
 
