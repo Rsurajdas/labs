@@ -9,20 +9,18 @@ orge = Orge(250, 15)
 # print(zombie.get__type())  # This will work because get_type() is a public method
 # print(orge.get__type())  # This will work because get_type() is a public method
 
-# print(zombie.info())
-# print(orge.info())
+def battle(e: Enemy, target):
+    return "\n".join([
+        e.info(),
+        e.attack()
+    ])
 
-# print(zombie.attack())
-# print(orge.attack())
+enemys: Enemy = [zombie, orge]
 
-# print(zombie.move_towards(orge))
-# print(orge.move_towards(zombie))
-
-# print(zombie.special__attack(orge))
-# print(orge.special__attack(zombie))
-
-arena: Enemy = [zombie, orge]
-
-for enemy in arena:
-    print(enemy.info())
-    print(enemy.special__attack(zombie if enemy is orge else orge))
+def arena(enemys):
+    for attacker in enemys:
+        for defender in enemys:
+            if attacker is not defender:
+                print(battle(attacker, defender))
+                
+arena(enemys)
