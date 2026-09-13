@@ -1,9 +1,13 @@
 from zombie import *
 from orge import *
 from enemy import *
+from weapon import *
 
-zombie = Zombie(100, 5)
-orge = Orge(250, 15)
+hammer = Weapon("Hammer", 20)
+stick = Weapon("Stick", 2)
+
+zombie = Zombie(100, 5, stick)
+orge = Orge(250, 15, hammer)
 
 # print(zombie.__type)  # This will raise an AttributeError because __type is private
 # print(zombie.get__type())  # This will work because get_type() is a public method
