@@ -6,6 +6,6 @@ DATABASE_CONNECTION_URL = "postgresql+psycopg://postgres:suraj123@localhost:5432
 
 engine = create_engine(DATABASE_CONNECTION_URL)
 
-session_local = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 Base = declarative_base()
