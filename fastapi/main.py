@@ -5,7 +5,6 @@ from fastapi import FastAPI, Depends
 import models
 import schema
 
-from models import Books
 from database import engine, SessionLocal
 
 app = FastAPI()
@@ -22,7 +21,7 @@ DB_DEPENDENCY = Annotated[Session, Depends(get_db)]
 
 @app.get("/books")
 async def get_all_books(db: DB_DEPENDENCY):
-    books = db.query(Books).all()
+    books = db.query(models.Books).all()
     return {
         "status": "success",
         "length": len(books),
@@ -31,7 +30,7 @@ async def get_all_books(db: DB_DEPENDENCY):
     
 @app.post("/books", response_model=schema.BookResponseWrapper)
 async def create_book(book: schema.BookCreate, db: DB_DEPENDENCY):
-    db_book = Books(**book.model_dump())
+    db_book = models.Books(**book.model_dump())
     db.add(db_book)
     db.commit()
     db.refresh(db_book)
