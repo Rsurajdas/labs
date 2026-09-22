@@ -488,6 +488,9 @@
 -- SELECT *
 -- FROM sales
 -- WHERE date_created BETWEEN '2026-02-15' AND '2026-03-17';
+-- SELECT *
+-- FROM sales
+-- WHERE customer_name = 'Amit Thakur';
 SELECT *
 FROM sales
-WHERE customer_name = 'Amit Thakur';
+WHERE customer_name <> 'Amit Thakur';
