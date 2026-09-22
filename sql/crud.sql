@@ -491,6 +491,9 @@
 -- SELECT *
 -- FROM sales
 -- WHERE customer_name = 'Amit Thakur';
+-- SELECT *
+-- FROM sales
+-- WHERE customer_name <> 'Amit Thakur';
 SELECT *
 FROM sales
-WHERE customer_name <> 'Amit Thakur';
+WHERE date_fulfiled - date_created <= 2;
