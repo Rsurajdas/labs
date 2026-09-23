@@ -510,3 +510,14 @@
 -- WHERE is_disputed IS FALSE
 -- ORDER BY price
 -- LIMIT 10;
+-- SELECT DISTINCT customer_name
+-- FROM sales
+-- ORDER BY customer_name;
+-- Subqueries
+CREATE VIEW base_result AS
+SELECT *
+FROM sales
+WHERE price > 2999;
+SELECT customer_name,
+    product_name
+FROM base_result;
