@@ -10,6 +10,14 @@ interface Credentials {
   email: string;
   password: string;
 }
+interface Admin {
+  permissions: Array<string>;
+}
+interface AppUser {
+  name: string;
+}
+// Merge types
+interface AppAdmin extends Admin, AppUser {}
 
 let userId: UserId = "abc1"; // union type
 userId = 123;
@@ -45,4 +53,9 @@ console.log(output);
 let cred: Credentials = {
   email: "suraj@gmail.com",
   password: "123456",
+};
+
+let adminUser: AppAdmin = {
+  name: "suraj",
+  permissions: ["all"],
 };
