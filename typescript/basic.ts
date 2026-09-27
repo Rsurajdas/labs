@@ -1,15 +1,16 @@
 type UserId = string | number;
 type CalcFn = (a: number, b: number) => number;
-
-let userId: UserId = "abc1"; // union type
-userId = 123;
-
-let user: {
+type User = {
   id: UserId;
   name: string;
   age: number;
   isValid: boolean;
 };
+
+let userId: UserId = "abc1"; // union type
+userId = 123;
+
+let user: User;
 
 user = {
   id: "abc",
