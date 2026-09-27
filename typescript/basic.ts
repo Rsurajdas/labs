@@ -18,6 +18,10 @@ interface AppUser {
 }
 interface AppAdmin extends Admin, AppUser {} // Merge types
 type RoleEnum = "admin" | "user" | "editor";
+type DataStorage<T> = {
+  storage: Array<T>;
+  append: (data: T) => void;
+};
 
 // ---------------------------------------------
 
@@ -66,3 +70,10 @@ let role: RoleEnum;
 role = "admin";
 role = "editor";
 role = "user";
+
+const userObj: DataStorage<User> = {
+  storage: [{ id: 1, name: "suraj", age: 32, isValid: true }],
+  append(data) {
+    this.storage.push(data);
+  },
+};
