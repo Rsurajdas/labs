@@ -41,7 +41,7 @@ async def create_book(book: schema.BookCreate, db: DB_DEPENDENCY):
 
 @app.get("/books/{id}")
 async def get_book_by_id(id: int, db: DB_DEPENDENCY):
-    book = db.query(models.Books).filter(models.Books.id == id).first()
+    book = db.query(models.Books).filter_by(id=id).first()
     return {
         "status": "success",
         "data": book
