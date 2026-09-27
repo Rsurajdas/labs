@@ -6,6 +6,10 @@ type User = {
   age: number;
   isValid: boolean;
 };
+interface Credentials {
+  email: string;
+  password: string;
+}
 
 let userId: UserId = "abc1"; // union type
 userId = 123;
@@ -37,3 +41,8 @@ function calculate(a: number, b: number, calcFn: CalcFn): number {
 
 let output = calculate(5, 7, add);
 console.log(output);
+
+let cred: Credentials = {
+  email: "suraj@gmail.com",
+  password: "123456",
+};
