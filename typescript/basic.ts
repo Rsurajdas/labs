@@ -1,8 +1,11 @@
-let userId: string | number = "abc1"; // union type
+type UserId = string | number;
+type CalcFn = (a: number, b: number) => number;
+
+let userId: UserId = "abc1"; // union type
 userId = 123;
 
 let user: {
-  id: string | number;
+  id: UserId;
   name: string;
   age: number;
   isValid: boolean;
@@ -27,11 +30,7 @@ function add(a: number, b: number): number {
   return a + b;
 }
 
-function calculate(
-  a: number,
-  b: number,
-  calcFn: (a: number, b: number) => number,
-): number {
+function calculate(a: number, b: number, calcFn: CalcFn): number {
   return calcFn(a, b);
 }
 
