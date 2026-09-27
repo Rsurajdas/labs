@@ -15,4 +15,10 @@ user = {
   isValid: true,
 };
 
-let hobbies: string[] = ["cooking", "music", "anime", "coding", "learning"];
+let hobbies: Array<string> = [
+  "cooking",
+  "music",
+  "anime",
+  "coding",
+  "learning",
+];
