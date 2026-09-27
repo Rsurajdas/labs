@@ -16,8 +16,10 @@ interface Admin {
 interface AppUser {
   name: string;
 }
-// Merge types
-interface AppAdmin extends Admin, AppUser {}
+interface AppAdmin extends Admin, AppUser {} // Merge types
+type RoleEnum = "admin" | "user" | "editor";
+
+// ---------------------------------------------
 
 let userId: UserId = "abc1"; // union type
 userId = 123;
@@ -59,3 +61,8 @@ let adminUser: AppAdmin = {
   name: "suraj",
   permissions: ["all"],
 };
+
+let role: RoleEnum;
+role = "admin";
+role = "editor";
+role = "user";
