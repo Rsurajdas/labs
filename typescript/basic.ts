@@ -14,3 +14,5 @@ user = {
   age: 26,
   isValid: true,
 };
+
+let hobbies: string[] = ["cooking", "music", "anime", "coding", "learning"];
