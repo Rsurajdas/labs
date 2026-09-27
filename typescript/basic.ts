@@ -22,3 +22,18 @@ let hobbies: Array<string> = [
   "coding",
   "learning",
 ];
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+function calculate(
+  a: number,
+  b: number,
+  calcFn: (a: number, b: number) => number,
+): number {
+  return calcFn(a, b);
+}
+
+let output = calculate(5, 7, add);
+console.log(output);
