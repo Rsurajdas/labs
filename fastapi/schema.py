@@ -6,6 +6,8 @@ class BookBase(BaseModel):
     author: str = Field(min_length=3)
     rating: int = Field(ge=1, le=5)
     
+    model_config = ConfigDict(json_schema_extra={"example": {"title": "A new book", "description": "Book description", "author": "John doe","ratting": 5}})
+    
 class BookCreate(BookBase):
     pass
 
