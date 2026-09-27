@@ -21,7 +21,7 @@ type RoleEnum = "admin" | "user" | "editor";
 type DataStorage<T> = {
   storage: Array<T>;
   append: (data: T) => void;
-};
+}; // generic type declaration
 
 // ---------------------------------------------
 
