@@ -7,13 +7,13 @@ import AddNewGoal from "./components/AddNewGoal";
 
 function App() {
   const [goals, setGoals] = useState<Goal[]>([]);
-  function addGoalHandler() {
+  function addGoalHandler(title: string, description: string) {
     setGoals((prevGoals) => [
       ...prevGoals,
       {
         id: prevGoals.length + 1,
-        title: "New Goal",
-        description: "This is a new goal.",
+        title: title,
+        description: description,
       },
     ]);
   }
@@ -26,7 +26,7 @@ function App() {
       <Header image={{ src: goalImage, alt: "Course Goals" }}>
         <h1>Welcome to the Course</h1>
       </Header>
-      <AddNewGoal />
+      <AddNewGoal onAdd={addGoalHandler} />
       <CourseGoalList goals={goals} onDeleteGoal={deleteGoalHandler} />
     </main>
   );
