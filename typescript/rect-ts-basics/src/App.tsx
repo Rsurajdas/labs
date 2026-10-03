@@ -1,13 +1,8 @@
-import CourseGoal from "./components/CourseGoal";
 import Header from "./components/Header";
 import goalImage from "./assets/goals.jpg";
 import { useState } from "react";
-
-interface Goal {
-  id: number;
-  title: string;
-  description: string;
-}
+import CourseGoalList from "./components/CourseGoalList";
+import { type Goal } from "./types/goal";
 
 function App() {
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -27,15 +22,7 @@ function App() {
         <h1>Welcome to the Course</h1>
       </Header>
       <button onClick={addGoalHandler}>Add Goal</button>
-      <ul>
-        {goals.map((goal) => (
-          <li key={goal.id}>
-            <CourseGoal title={goal.title}>
-              <p>{goal.description}</p>
-            </CourseGoal>
-          </li>
-        ))}
-      </ul>
+      <CourseGoalList goals={goals} />
     </main>
   );
 }
