@@ -2,7 +2,7 @@ import CourseGoal from "./CourseGoal";
 import { type Goal } from "../types/goal";
 
 interface CourseGoalListProps {
-  goals: Goal[];
+  goals: Array<Goal>;
 }
 
 export default function CourseGoalList({ goals }: CourseGoalListProps) {
