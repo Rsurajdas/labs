@@ -1,7 +1,7 @@
 import { type SubmitEvent } from "react";
 
 export default function AddNewGoal() {
-  function submitHandler(event: SubmitEvent) {
+  function submitHandler(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
   }
   return (
