@@ -3,3 +3,5 @@ export interface Goal {
   title: string;
   description: string;
 }
+
+export type GoalDeleteHandler = (id: number) => void;
