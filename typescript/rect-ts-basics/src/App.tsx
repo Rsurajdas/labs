@@ -19,6 +19,7 @@ function App() {
   function deleteGoalHandler(id: number) {
     setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== id));
   }
+
   return (
     <main>
       <Header image={{ src: goalImage, alt: "Course Goals" }}>
