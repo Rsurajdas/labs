@@ -46,3 +46,12 @@ async def get_book_by_id(id: int, db: DB_DEPENDENCY):
         "status": "success",
         "data": book
     }
+
+@app.get("/books/published/{year}")
+async def get_books_by_published_year(year: int, db: DB_DEPENDENCY):
+    books = db.query(models.Books).filter_by(published_date=year).all()
+    return {
+        "status": "success",
+        "length": len(books),
+        "data": books
+    }
