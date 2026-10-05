@@ -1,6 +1,6 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
-from fastapi import FastAPI, Depends, Path, Query
+from fastapi import FastAPI, Depends, Path, Query, HTTPException
 
 import models
 import schema
@@ -46,6 +46,8 @@ async def create_book(book: schema.BookCreate, db: DB_DEPENDENCY):
 @app.get("/books/{id}", response_model=schema.BookResponseWrapper)
 async def get_book_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     book = db.query(models.Books).filter_by(id=id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail=f"Book with id {id} not found")
     return {"status": "success", "data": book}
 
 
