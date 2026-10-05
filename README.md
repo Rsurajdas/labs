@@ -8,9 +8,10 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **React + TypeScript:** a Vite course-goals app (`typescript/rect-ts-basics/`): typed props with `PropsWithChildren`, `children`, lifting state up, typed callbacks for adding and deleting goals, typed form events, and shared types in a separate `types/` file.
+- **FastAPI:** a books API backed by PostgreSQL through SQLAlchemy with Pydantic schemas. Recent additions: get a book by ID, a `published_date` field, a `GET /books/published/{year}` endpoint, and an optional `rating` query filter (1–5) on `GET /books`.
 - **TypeScript:** type aliases, union types, interfaces and interface merging, literal-union "enums", and generics.
 - **SQL:** CRUD practice tasks on `products`, `sales`, and `employees` tables: filtering, `ORDER BY`, `LIMIT`, `DISTINCT`, and views.
-- **FastAPI:** a books API, first with an in-memory list and now backed by PostgreSQL through SQLAlchemy with Pydantic response schemas.
 
 ## Structure
 
@@ -44,7 +45,12 @@ labs/
 │   └── crud.sql, crud_task*.sql   # CRUD practice tasks
 ├── typescript/                    # TypeScript fundamentals
 │   ├── basic.ts                   # Source
-│   └── basic.js                   # Compiled output
+│   ├── basic.js                   # Compiled output
+│   └── rect-ts-basics/            # React + TypeScript (Vite) course-goals app
+│       └── src/
+│           ├── App.tsx            # Goal state, add/delete handlers
+│           ├── components/        # Header, CourseGoal, CourseGoalList, AddNewGoal
+│           └── types/goal.ts      # Goal interface and handler types
 └── package.json                   # Node tooling (TypeScript compiler)
 ```
 
@@ -56,7 +62,7 @@ labs/
 | [`rust/`](./rust)             | Rust fundamentals: variables, mutability, and data types                        |
 | [`shopify/`](./shopify)       | Shopify theme structure and Liquid templating notes                             |
 | [`sql/`](./sql)               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD queries, views    |
-| [`typescript/`](./typescript) | TypeScript types, interfaces, unions, and generics                              |
+| [`typescript/`](./typescript) | TypeScript types, interfaces, unions, generics, and a React + TS app            |
 
 ## Conventions
 
@@ -79,6 +85,9 @@ cd js && node <file>.js
 # TypeScript (compiler installed via npm at the repo root)
 npm install
 npx tsc typescript/basic.ts
+
+# React + TypeScript (Vite)
+cd typescript/rect-ts-basics && npm install && npm run dev
 
 # Python
 cd python && python <file>.py
