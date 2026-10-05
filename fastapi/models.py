@@ -9,3 +9,4 @@ class Books(Base):
     description = Column(Text)
     author = Column(String(50), nullable=False)
     rating = Column(Integer, CheckConstraint("rating >= 1 AND rating <= 5"))
+    published_date = Column(Integer, nullable=True)
