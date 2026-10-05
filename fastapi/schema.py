@@ -24,4 +24,5 @@ class BookResponse(BookBase):
     
 class BookResponseWrapper(BaseModel):
     status: str
-    data: BookResponse
+    length: int | None = None
+    data:list[BookResponse]

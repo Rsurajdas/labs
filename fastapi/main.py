@@ -19,7 +19,7 @@ def get_db():
         
 DB_DEPENDENCY = Annotated[Session, Depends(get_db)]
 
-@app.get("/books")
+@app.get("/books", response_model=schema.BookResponseWrapper)
 async def get_all_books(db: DB_DEPENDENCY, rating: int | None = Query(default=None, gt=0, lt=6)):
     if rating:
         books = db.query(models.Books).filter_by(rating=rating).all()
@@ -42,7 +42,7 @@ async def create_book(book: schema.BookCreate, db: DB_DEPENDENCY):
         "data": db_book
     }
 
-@app.get("/books/{id}")
+@app.get("/books/{id}", response_model=schema.BookResponseWrapper)
 async def get_book_by_id( db: DB_DEPENDENCY, id: int = Path(gt=0)):
     book = db.query(models.Books).filter_by(id=id).first()
     return {
@@ -50,7 +50,7 @@ async def get_book_by_id( db: DB_DEPENDENCY, id: int = Path(gt=0)):
         "data": book
     }
 
-@app.get("/books/published/{year}")
+@app.get("/books/published/{year}", response_model=schema.BookResponseWrapper)
 async def get_books_by_published_year(year: int, db: DB_DEPENDENCY):
     books = db.query(models.Books).filter_by(published_date=year).all()
     return {
