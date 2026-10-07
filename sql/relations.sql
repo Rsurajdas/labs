@@ -72,3 +72,12 @@ FROM users AS u
 WHERE c.id = 5
     OR c.id = 7
 ORDER BY u.id DESC;
+SELECT house_name,
+    street,
+    c.name AS city_name,
+    first_name,
+    last_name,
+    email
+FROM addresses AS a
+    LEFT JOIN users AS u ON a.id = u.address_id
+    LEFT JOIN cities AS c ON c.id = a.city_id;
