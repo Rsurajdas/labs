@@ -59,3 +59,16 @@ VALUES ('Amit', 'Sharma', 'amit.sharma@example.com', 1),
         'anjali.gupta@example.com',
         10
     );
+SELECT u.id,
+    first_name,
+    last_name,
+    email,
+    house_name,
+    street,
+    c.name AS city_name
+FROM users AS u
+    INNER JOIN addresses AS a ON u.address_id = a.id
+    INNER JOIN cities AS c ON a.city_id = c.id
+WHERE c.id = 5
+    OR c.id = 7
+ORDER BY u.id DESC;
