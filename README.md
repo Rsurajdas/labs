@@ -21,6 +21,7 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 ```
 labs/
 ├── fastapi/                       # FastAPI + SQLAlchemy books API
+│   ├── README.md
 │   ├── main.py                    # Routes backed by PostgreSQL, 404 handling
 │   ├── database.py                # Engine and session setup
 │   ├── models.py                  # SQLAlchemy models
@@ -30,6 +31,7 @@ labs/
 │   ├── codeWars.js                # Codewars katas
 │   └── pracHub.js                 # Algorithm practice (two-sum, etc.)
 ├── python/                        # Python basics
+│   ├── README.md
 │   ├── dict.py, list.py, imports.py
 │   └── oop/                       # Classes and inheritance (Enemy, Zombie, Ogre, Weapon)
 ├── rust/                          # Rust course projects
@@ -46,6 +48,7 @@ labs/
 │   ├── crud.sql, crud_task*.sql   # CRUD practice tasks (sales, products, employees)
 │   └── relations.sql              # Foreign keys and JOINs: cities → addresses → users
 ├── typescript/                    # TypeScript fundamentals
+│   ├── README.md
 │   ├── basic.ts                   # Source
 │   ├── basic.js                   # Compiled output
 │   └── rect-ts-basics/            # React + TypeScript (Vite) course-goals app
