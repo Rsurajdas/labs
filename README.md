@@ -9,9 +9,10 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 ## Currently working on
 
 - **React + TypeScript:** a Vite course-goals app (`typescript/rect-ts-basics/`): typed props with `PropsWithChildren`, `children`, lifting state up, typed callbacks for adding and deleting goals, typed form events, and shared types in a separate `types/` file.
-- **FastAPI:** a books API backed by PostgreSQL through SQLAlchemy with Pydantic schemas. Recent additions: get a book by ID, a `published_date` field, a `GET /books/published/{year}` endpoint, and an optional `rating` query filter (1–5) on `GET /books`.
+- **SQL relationships:** a `relations` database (`sql/relations.sql`) with `cities`, `addresses`, and `users` linked by foreign keys, seeded with sample data, and queried with multi-table `INNER JOIN`s to pull each user's address and city.
+- **FastAPI:** a books API backed by PostgreSQL through SQLAlchemy with Pydantic schemas. Recent additions: `response_model` on the read endpoints using a `BookResponseWrapper` (`status`, optional `length`, list of books), a 404 `HTTPException` when a book ID doesn't exist, `GET /books/published/{year}`, and an optional `rating` query filter (1–5) on `GET /books`.
 - **TypeScript:** type aliases, union types, interfaces and interface merging, literal-union "enums", and generics.
-- **SQL:** CRUD practice tasks on `products`, `sales`, and `employees` tables: filtering, `ORDER BY`, `LIMIT`, `DISTINCT`, and views.
+- **SQL CRUD:** practice tasks on `products`, `sales`, and `employees` tables: filtering, `ORDER BY`, `LIMIT`, `DISTINCT`, subqueries, and views.
 
 ## Structure
 
@@ -20,7 +21,7 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 ```
 labs/
 ├── fastapi/                       # FastAPI + SQLAlchemy books API
-│   ├── main.py                    # App and routes backed by PostgreSQL
+│   ├── main.py                    # Routes backed by PostgreSQL, 404 handling
 │   ├── database.py                # Engine and session setup
 │   ├── models.py                  # SQLAlchemy models
 │   ├── schema.py                  # Pydantic schemas and response wrappers
@@ -42,7 +43,8 @@ labs/
 │   ├── README.md
 │   ├── mysql.sql, postgres.sql    # Same schema in both dialects
 │   ├── practice.sql               # Products table with constraints
-│   └── crud.sql, crud_task*.sql   # CRUD practice tasks
+│   ├── crud.sql, crud_task*.sql   # CRUD practice tasks (sales, products, employees)
+│   └── relations.sql              # Foreign keys and JOINs: cities → addresses → users
 ├── typescript/                    # TypeScript fundamentals
 │   ├── basic.ts                   # Source
 │   ├── basic.js                   # Compiled output
@@ -56,12 +58,12 @@ labs/
 
 | Directory                     | What's in it                                                                    |
 | ----------------------------- | ------------------------------------------------------------------------------- |
-| [`fastapi/`](./fastapi)       | REST APIs with FastAPI: path/query params, CRUD endpoints, SQLAlchemy, Pydantic |
+| [`fastapi/`](./fastapi)       | REST APIs with FastAPI: path/query params, CRUD, SQLAlchemy, response models    |
 | [`js/`](./js)                 | JavaScript problem solving from Codewars and other practice sites               |
 | [`python/`](./python)         | Python data structures, imports, and object-oriented programming                |
 | [`rust/`](./rust)             | Rust fundamentals: variables, mutability, and data types                        |
 | [`shopify/`](./shopify)       | Shopify theme structure and Liquid templating notes                             |
-| [`sql/`](./sql)               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD queries, views    |
+| [`sql/`](./sql)               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs     |
 | [`typescript/`](./typescript) | TypeScript types, interfaces, unions, generics, and a React + TS app            |
 
 ## Conventions
@@ -103,6 +105,8 @@ cd rust/<project> && cargo run
 # SQL
 mysql -u root -p < sql/mysql.sql
 psql -U postgres -f sql/postgres.sql
+# sql/relations.sql: run statement by statement in a MySQL client, adding `USE relations;`
+# after CREATE DATABASE (the script doesn't switch databases on its own)
 ```
 
 ## Adding a new topic
