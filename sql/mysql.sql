@@ -66,7 +66,7 @@ CREATE TABLE conversations (
     employer_name VARCHAR(200),
     message TEXT,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 INSERT INTO conversations
 VALUES (
         'Suraj Kumar',
