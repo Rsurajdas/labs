@@ -43,3 +43,11 @@ SELECT house_name,
 FROM addresses AS a
     LEFT JOIN users AS u ON a.id = u.address_id
     LEFT JOIN cities AS c ON c.id = a.city_id;
+SELECT c.name as city_name,
+    u.first_name,
+    u.last_name
+FROM cities AS c
+    LEFT JOIN addresses AS a ON a.city_id = c.id
+    LEFT JOIN users AS u ON u.address_id = a.id
+WHERE u.first_name IS NOT NULL
+    AND u.last_name IS NOT NULL;
