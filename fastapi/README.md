@@ -1,8 +1,17 @@
 # FastAPI
 
-A books API built twice: first with an in-memory list and raw dict bodies, then again on PostgreSQL with SQLAlchemy models and Pydantic schemas.
+FastAPI projects, one per folder, each with its own virtual environment.
 
-## What's here
+| Folder   | Status                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------- |
+| `books/` | A books API built twice: in-memory first, then on PostgreSQL with SQLAlchemy and Pydantic |
+| `todo/`  | Just started: only a `.venv` so far, no code yet                                          |
+
+## books
+
+A books API built twice: first with an in-memory list and raw dict bodies, then again on PostgreSQL with SQLAlchemy models and Pydantic schemas. Paths below are relative to `books/`.
+
+### What's here
 
 | Path                     | Covers                                                                         |
 | ------------------------ | ------------------------------------------------------------------------------ |
@@ -13,7 +22,7 @@ A books API built twice: first with an in-memory list and raw dict bodies, then 
 | `models.py`              | SQLAlchemy `Books` table with a `CHECK` on rating                              |
 | `schema.py`              | Pydantic `BookCreate`, `BookResponse`, and the `BookResponseWrapper` envelope  |
 
-### Version 1: in-memory (project_one/)
+#### Version 1: in-memory (project_one/)
 
 | Method   | Path          | Notes                                                       |
 | -------- | ------------- | ----------------------------------------------------------- |
@@ -25,7 +34,7 @@ A books API built twice: first with an in-memory list and raw dict bodies, then 
 
 Data lives in the `BOOKS` list, so every change is lost on restart.
 
-### Version 2: PostgreSQL (main.py)
+#### Version 2: PostgreSQL (main.py)
 
 | Method | Path                      | Notes                                         |
 | ------ | ------------------------- | --------------------------------------------- |
@@ -42,7 +51,7 @@ Every response is wrapped in `BookResponseWrapper`:
 
 `length` is only set on list endpoints; `data` is a list there and a single book otherwise.
 
-### What changed between the two
+#### What changed between the two
 
 |                  | Version 1                              | Version 2                                                    |
 | ---------------- | -------------------------------------- | ------------------------------------------------------------ |
@@ -54,12 +63,12 @@ Every response is wrapped in `BookResponseWrapper`:
 | DB session       | n/a                                    | `get_db()` generator + `Annotated[Session, Depends(get_db)]` |
 | Book fields      | `year`, float `rating`, `genre`, `price`, `in_stock` | `published_date`, integer `rating` 1–5, `description` |
 
-## Running
+### Running
 
 Needs a local PostgreSQL with a database called `books`. The table is created on startup by `Base.metadata.create_all`.
 
 ```bash
-cd fastapi
+cd fastapi/books
 python -m venv venv
 venv\Scripts\activate             # Windows; source venv/bin/activate elsewhere
 pip install "fastapi[standard]" sqlalchemy "psycopg[binary]"
@@ -72,9 +81,9 @@ cd project_one && uvicorn books:app --reload   # version 1, no database needed
 
 Interactive docs at <http://127.0.0.1:8000/docs>. The `json_schema_extra` example in `schema.py` pre-fills the `POST /books` body there.
 
-The local venv (ignored by git through the `.gitignore` that `venv` creates inside it) has FastAPI 0.141.1, SQLAlchemy 2.0.54, Pydantic 2.13.5, psycopg 3.3.5, on Python 3.14.
+The local venv at `books/venv` (ignored by git through the `.gitignore` that `venv` creates inside it) has FastAPI 0.141.1, SQLAlchemy 2.0.54, Pydantic 2.13.5, psycopg 3.3.5, on Python 3.14.
 
-## Other notes
+### Other notes
 
 - **`BookResponse` breaks on NULL columns.** It redeclares `description: str` and `published_date: int`, overriding the optional versions from `BookBase`. The database allows NULL in both, and `BookCreate` lets you omit them. So a book created without a description is saved fine, but every endpoint that returns it fails response validation with a `500`, including the `POST` that created it. Deleting the redeclared fields (they're inherited from `BookBase` already) fixes it.
 - **The database password is in `database.py`**, and in git history. Fine for a local throwaway, but if `suraj123` is used anywhere else, change it there. Reading the URL from an environment variable (`os.environ["DATABASE_URL"]`, or `pydantic-settings`, which is already installed) keeps it out of the repo.
