@@ -9,8 +9,9 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 ## Currently working on
 
 - **React + TypeScript:** a Vite course-goals app (`typescript/rect-ts-basics/`): typed props with `PropsWithChildren`, `children`, lifting state up, typed callbacks for adding and deleting goals, typed form events, and shared types in a separate `types/` file.
-- **SQL relationships:** a `relations` database (`sql/relations.sql`) with `cities`, `addresses`, and `users` linked by foreign keys, seeded with sample data, and queried with multi-table `INNER JOIN`s to pull each user's address and city.
-- **FastAPI:** a books API backed by PostgreSQL through SQLAlchemy with Pydantic schemas. Recent additions: `response_model` on the read endpoints using a `BookResponseWrapper` (`status`, optional `length`, list of books), a 404 `HTTPException` when a book ID doesn't exist, `GET /books/published/{year}`, and an optional `rating` query filter (1–5) on `GET /books`.
+- **SQL relationships:** a PostgreSQL `relations` database (`sql/relations.sql`) with `cities`, `addresses`, and `users` linked by foreign keys and `SERIAL` primary keys. Seed data lives in its own file (`sql/relations_insert_data_query.sql`), with some `NULL` foreign keys on purpose. The queries use multi-table `INNER JOIN`s and `LEFT JOIN`s, plus `IS NOT NULL` filters to drop the unmatched rows.
+- **SQL joins:** `departments` and `employees` (`sql/practice_data_normalization.sql`): `INNER JOIN` vs `LEFT JOIN`, finding employees with no department, and top-N by salary.
+- **FastAPI:** a books API (`fastapi/books/`) backed by PostgreSQL through SQLAlchemy with Pydantic schemas: `response_model` with a `BookResponseWrapper` envelope, a 404 `HTTPException` for missing IDs, `GET /books/published/{year}`, and an optional `rating` filter (1–5) on `GET /books`. A `todo/` project has been started next to it (no code yet).
 - **TypeScript:** type aliases, union types, interfaces and interface merging, literal-union "enums", and generics.
 - **SQL CRUD:** practice tasks on `products`, `sales`, and `employees` tables: filtering, `ORDER BY`, `LIMIT`, `DISTINCT`, subqueries, and views.
 
@@ -20,13 +21,15 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 
 ```
 labs/
-├── fastapi/                       # FastAPI + SQLAlchemy books API
+├── fastapi/                       # FastAPI projects, one per folder
 │   ├── README.md
-│   ├── main.py                    # Routes backed by PostgreSQL, 404 handling
-│   ├── database.py                # Engine and session setup
-│   ├── models.py                  # SQLAlchemy models
-│   ├── schema.py                  # Pydantic schemas and response wrappers
-│   └── project_one/               # First version: in-memory CRUD books API
+│   ├── books/                     # Books API, built twice
+│   │   ├── main.py                # Routes backed by PostgreSQL, 404 handling
+│   │   ├── database.py            # Engine and session setup
+│   │   ├── models.py              # SQLAlchemy models
+│   │   ├── schema.py              # Pydantic schemas and response wrappers
+│   │   └── project_one/           # First version: in-memory CRUD books API
+│   └── todo/                      # Just started, no code yet
 ├── js/                            # JavaScript practice problems
 │   ├── codeWars.js                # Codewars katas
 │   └── pracHub.js                 # Algorithm practice (two-sum, etc.)
@@ -44,9 +47,11 @@ labs/
 ├── sql/                           # MySQL and PostgreSQL scripts
 │   ├── README.md
 │   ├── mysql.sql, postgres.sql    # Same schema in both dialects
-│   ├── practice.sql               # Products table with constraints
+│   ├── practice_crud.sql          # Products table: inserts and basic queries
 │   ├── crud.sql, crud_task*.sql   # CRUD practice tasks (sales, products, employees)
-│   └── relations.sql              # Foreign keys and JOINs: cities → addresses → users
+│   ├── practice_data_normalization.sql  # departments ↔ employees: INNER vs LEFT JOIN
+│   ├── relations.sql              # Foreign keys and JOINs: cities → addresses → users
+│   └── relations_insert_data_query.sql  # Seed data for relations.sql
 ├── typescript/                    # TypeScript fundamentals
 │   ├── README.md
 │   ├── basic.ts                   # Source
@@ -99,8 +104,9 @@ cd python && python <file>.py
 cd python/oop && python main.py
 
 # FastAPI (needs fastapi, uvicorn, sqlalchemy, psycopg, and a local PostgreSQL "books" database)
-cd fastapi && uvicorn main:app --reload
-cd fastapi/project_one && uvicorn books:app --reload
+# Full setup in fastapi/README.md
+cd fastapi/books && uvicorn main:app --reload
+cd fastapi/books/project_one && uvicorn books:app --reload
 
 # Rust
 cd rust/<project> && cargo run
@@ -108,8 +114,14 @@ cd rust/<project> && cargo run
 # SQL
 mysql -u root -p < sql/mysql.sql
 psql -U postgres -f sql/postgres.sql
-# sql/relations.sql: run statement by statement in a MySQL client, adding `USE relations;`
-# after CREATE DATABASE (the script doesn't switch databases on its own)
+
+# relations.sql and practice_data_normalization.sql are PostgreSQL (SERIAL keys).
+# relations.sql doesn't switch databases itself, so create it first and point psql at it
+# (its own CREATE DATABASE line then just errors and psql carries on):
+createdb -U postgres relations
+psql -U postgres -d relations -f sql/relations.sql
+psql -U postgres -d relations -f sql/relations_insert_data_query.sql
+# The SELECTs in relations.sql run before the seed data goes in, so rerun them afterwards
 ```
 
 ## Adding a new topic
