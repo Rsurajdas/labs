@@ -4,7 +4,11 @@ from fastapi import FastAPI, Depends, HTTPException, Path
 import models
 from database import SessionLocal, engine
 from starlette import status
-from schema import TodoRequest, TodoResponseWrapper
+from schema import (
+    TodoListResponse,
+    TodoRequest,
+    TodoSingleResponse,
+)
 
 app = FastAPI()
 
@@ -22,20 +26,30 @@ def get_db():
 DB_DEPENDENCY = Annotated[Session, Depends(get_db)]
 
 
-@app.get("/todos", status_code=status.HTTP_200_OK)
+@app.get("/todos", response_model=TodoListResponse, status_code=status.HTTP_200_OK)
 async def get_all_todos(db: DB_DEPENDENCY):
-    return db.query(models.Todo).all()
+    books = db.query(models.Todo).all()
+    return {
+        "status": "success",
+        "length": len(books),
+        "data": books,
+    }
 
 
-@app.get("/todos/{id}", status_code=status.HTTP_200_OK)
+@app.get(
+    "/todos/{id}", response_model=TodoSingleResponse, status_code=status.HTTP_200_OK
+)
 async def get_todo_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
-    book = db.query(models.Todo).filter(models.Todo.id == id).first()
-    if book is not None:
-        return book
+    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+    if todo is not None:
+        return {
+            "status": "success",
+            "data": todo,
+        }
     raise HTTPException(status_code=404, detail="Todo not found")
 
 
-@app.post("/todos", response_model=TodoResponseWrapper)
+@app.post("/todos", response_model=TodoSingleResponse)
 async def create_todo(db: DB_DEPENDENCY, body: TodoRequest):
     new_todo = models.Todo(**body.model_dump())
     db.add(new_todo)
