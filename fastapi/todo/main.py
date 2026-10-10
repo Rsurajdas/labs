@@ -4,6 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException, Path
 import models
 from database import SessionLocal, engine
 from starlette import status
+from schema import TodoRequest, TodoResponseWrapper
 
 app = FastAPI()
 
@@ -32,3 +33,16 @@ async def get_todo_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     if book is not None:
         return book
     raise HTTPException(status_code=404, detail="Todo not found")
+
+
+@app.post("/todos", response_model=TodoResponseWrapper)
+async def create_todo(db: DB_DEPENDENCY, body: TodoRequest):
+    new_todo = models.Todo(**body.model_dump())
+    db.add(new_todo)
+    db.commit()
+    db.refresh(new_todo)
+    return {
+        "status": "success",
+        "message": "Todo is successfully created!",
+        "data": new_todo,
+    }
