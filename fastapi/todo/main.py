@@ -57,6 +57,29 @@ async def create_todo(db: DB_DEPENDENCY, body: TodoRequest):
     db.refresh(new_todo)
     return {
         "status": "success",
-        "message": "Todo is successfully created!",
+        "message": "Todo is created successfully!",
         "data": new_todo,
+    }
+
+
+@app.put("/todos/{id}", response_model=TodoSingleResponse)
+async def update_todo(db: DB_DEPENDENCY, body: TodoRequest, id: int = Path(gt=0)):
+    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+
+    if todo is None:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    todo.title = body.title
+    todo.description = body.description
+    todo.priority = body.priority
+    todo.complete = body.complete
+
+    db.add(todo)
+    db.commit()
+    db.refresh(todo)
+
+    return {
+        "status": "success",
+        "message": "Todo is updated successfully!",
+        "data": todo,
     }
