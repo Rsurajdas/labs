@@ -4,12 +4,17 @@ CREATE TABLE authors(
     country VARCHAR(50) DEFAULT 'UNKNOWN',
     email VARCHAR(100) UNIQUE
 );
+CREATE TABLE genres(
+    genre_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
 CREATE TABLE books(
     book_id SERIAL PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
     price DECIMAL(8, 2) CHECK (price > 0),
     stock INT DEFAULT 0 CHECK (stock >= 0),
-    genre VARCHAR(50),
+    genre_id INT,
+    FOREIGN KEY (genre_id) REFERENCES genres(genre_id),
     author_id INT,
     FOREIGN KEY (author_id) REFERENCES authors(author_id)
 );
