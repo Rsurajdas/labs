@@ -16,9 +16,11 @@ export default function CourseGoalList({
     return <InfoBox mode="hint">Start adding the goals!</InfoBox>;
   }
   let warningBox: ReactNode;
-  if (goals.length >= 10) {
+  if (goals.length >= 2) {
     warningBox = (
-      <InfoBox mode="warning">You have so many goals in the pipeline!</InfoBox>
+      <InfoBox mode="warning" severity="high">
+        You have so many goals in the pipeline!
+      </InfoBox>
     );
   }
   return (
