@@ -1,8 +1,11 @@
+import Inputs from "./components/Inputs";
+
 function App() {
   return (
-    <>
-      <h1>Let's get started!</h1>;
-    </>
+    <main>
+      <Inputs label="Full Name" id="full-name" />
+      <Inputs label="email" id="email" />
+    </main>
   );
 }
 
