@@ -9,6 +9,7 @@ interface CourseGoalProps {
 }
 
 // type CourseGoalProps = PropsWithChildren<{ title: string }>;
+// PropsWithChildren -> Always makes children optional (children?: ReactNode)
 
 export default function CourseGoal({
   id,
