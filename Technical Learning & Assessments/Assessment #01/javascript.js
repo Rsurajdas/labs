@@ -13,20 +13,19 @@ function summarizeScores(students) {
     topScorer: null,
   };
   if (!students.length) return result;
-  let topScore = 0;
-  for (let i = 0; i < students.length; i++) {
-    const student = students[i];
+  let topScore = students[0].score;
+  for (const student of students) {
     if (student.score >= 40) {
       result.passed.push(student.name);
-      topScore = Math.max(student.score, topScore);
     } else {
       result.failed.push(student.name);
     }
+    if (student.score > topScore) {
+      topScore = student.score;
+      result.topScorer = student.name;
+    }
   }
-  result.topScorer = students.find(
-    (student) => student.score === topScore,
-  ).name;
   return result;
 }
 
-summarizeScores(students);
+console.log(summarizeScores(students));
