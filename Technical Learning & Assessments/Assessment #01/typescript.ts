@@ -8,9 +8,11 @@ interface User {
 }
 
 const userObj: User = { name: "sk", age: 32 };
-// 2.1 User type will have both name and age properties in a object structure.
-// 2.2 TypeScript will show an error `Dublicate indentifier 'User'`. User type strcture will consisder only first intialization in this case 'name'.
-// 2.3
+/* 
+2.1: The two declarations merge into one interface, so a User must have both name: string and age: number.
+2.2: Type aliases cannot be re-declared. The second type User produces a “Duplicate identifier” compile error. Aliases never merge.
+2.3: Merging is useful when you need to add properties to an interface declared somewhere you can’t edit. For example, you can add fields to a type that comes from a library, or to a global interface like Window, without touching the original declaration. 
+*/
 
 // Q6
 type Priority = "low" | "medium" | "high";
