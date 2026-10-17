@@ -29,11 +29,11 @@ print(z.take_damage(15))
 print(z.health, e.health)
 print(z.name)
 
-# "Grrr..."
-# "Goblin says nothing."
-# "35"
-# "35, 30"
-# "Zombie"
+# Grrr...
+# Goblin says nothing.
+# 35
+# 35 30
+# Zombie
 
 
 # Q10
