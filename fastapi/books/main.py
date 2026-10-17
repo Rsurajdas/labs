@@ -55,3 +55,18 @@ async def get_book_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
 async def get_books_by_published_year(year: int, db: DB_DEPENDENCY):
     books = db.query(models.Books).filter_by(published_date=year).all()
     return {"status": "success", "length": len(books), "data": books}
+
+
+# Assessment #01 Q9
+@app.get("/books", response_model=list[schema.BookResponse])
+def get_books(
+    published_after: int | None = Query(default=None),
+    min_rating: float | None = Query(default=None, ge=0, le=5),
+    db: Session = Depends(get_db),
+):
+    query = db.query(models.Books)
+    if published_after is not None:
+        query = query.filter(models.Books.published_date > published_after)
+    if min_rating is not None:
+        query = query.filter(models.Books.rating >= min_rating)
+    return query.order_by(models.Books.published_date.desc()).all()
