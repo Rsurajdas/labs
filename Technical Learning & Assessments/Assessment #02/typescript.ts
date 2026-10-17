@@ -6,7 +6,7 @@
  */
 // Q2
 function formatBookTitle(title: string, year: number): string {
-  return `${title} ${year}`;
+  return `${title} (${year})`;
 }
 // Q3
 let username: string = "suraj"; // Line 1
