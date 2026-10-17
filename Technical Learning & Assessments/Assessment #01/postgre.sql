@@ -9,9 +9,9 @@ LIMIT 3;
 SELECT d.id,
     d.name
 FROM departments AS d
-    LEFT JOIN employees as e ON e.department_id = d.id
-WHERE e.department_id IS NOT NULL
-ORDER BY department_id ASC;
+    LEFT JOIN employees AS e ON e.department_id = d.id
+WHERE e.id IS NULL
+ORDER BY d.name ASC;
 -- Q8
 CREATE VIEW user_locations AS
 SELECT u.id AS user_id,
