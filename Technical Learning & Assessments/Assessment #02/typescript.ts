@@ -81,7 +81,7 @@ setRole(users[0], "owner");
 /**
  * 1. "Editor" is not assignable, Literal types are case-sensitive
  * 2. "string" is not assignable to type "number"
- * 3. "Editor" is not assignable to type "Role", only "admin" | "editor" | "viewer" are allowed.
+ * 3. "owner" is not assignable to type "Role", only "admin" | "editor" | "viewer" are allowed.
  */
 // Q9 -> Interfaces
 interface Author {
