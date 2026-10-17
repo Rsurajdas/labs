@@ -150,3 +150,25 @@ function wrapResponse<T>(data: T, message: string): ApiResponse<T> {
 wrapResponse<Book>(book, "Finished successfully!");
 wrapResponse<Book[]>(books, "Finished successfully!");
 // Q12 -> Generics, Interfaces and Typed Functions
+interface Paginated<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+function paginate<T>(
+  items: Array<T>,
+  page: number,
+  pageSize: number,
+): Paginated<T> {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  return {
+    items: items.slice(start, end),
+    page,
+    pageSize,
+    totalItems: items.length,
+    totalPages: Math.ceil(items.length / pageSize),
+  };
+}
