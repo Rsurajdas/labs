@@ -56,8 +56,14 @@ function getGoalsByPriority(
 }
 function lastOrDefault<T>(arr: Array<T>, fallback: T) {
   if (!arr.length) return fallback;
-  return arr.pop();
+  return arr[arr.length - 1];
 }
 
 getGoalsByPriority(goals, "high");
 lastOrDefault<Goal>(goals, { id: 1, title: "Job in Dubai", priority: "high" });
+lastOrDefault([10, 20, 30], 0); // 30
+lastOrDefault<string>([], "none"); // "none"
+// Rejected by TypeScript:
+getGoalsByPriority(goals, "urgent");
+// Error: '"urgent"' is not assignable to type 'Priority'.
+// Priority only allows the literals "low" | "medium" | "high".
