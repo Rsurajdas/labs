@@ -3,7 +3,7 @@ import goalImage from "./assets/goals.jpg";
 import { useState } from "react";
 import CourseGoalList from "./components/CourseGoalList";
 import { type Goal } from "./types/goal";
-import AddNewGoal from "./components/AddNewGoal";
+import NewGoal from "./components/NewGoal";
 
 function App() {
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -26,7 +26,7 @@ function App() {
       <Header image={{ src: goalImage, alt: "Course Goals" }}>
         <h1>Welcome to the Course</h1>
       </Header>
-      <AddNewGoal onAdd={addGoalHandler} />
+      <NewGoal onAddGoal={addGoalHandler} />
       <CourseGoalList goals={goals} onDeleteGoal={deleteGoalHandler} />
     </main>
   );
