@@ -1,0 +1,18 @@
+[
+  {
+    "team_name": "Frontend",
+    "building_name": "Alpha Tower"
+  },
+  {
+    "team_name": "Backend",
+    "building_name": "Alpha Tower"
+  },
+  {
+    "team_name": "QA",
+    "building_name": "Beta Block"
+  },
+  {
+    "team_name": "DevOps",
+    "building_name": null
+  }
+]
