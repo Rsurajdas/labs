@@ -8,7 +8,7 @@ from models import auth as auth_model
 router = APIRouter()
 
 
-@router.get("/auth/")
+@router.post("/auth/")
 async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     new_user = auth_model.User(
         email=body.email,
@@ -21,5 +21,5 @@ async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     )
     db.add(new_user)
     db.commit()
-    db.refresh()
+    db.refresh(new_user)
     return "User added successfully!"
