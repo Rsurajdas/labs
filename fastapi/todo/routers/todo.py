@@ -1,10 +1,10 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Path
-import models
+from models import todo as todo_model
 from database import SessionLocal
 from starlette import status
-from schemas import todo
+from schemas import todo as todo_schema
 
 router = APIRouter()
 
@@ -21,10 +21,10 @@ DB_DEPENDENCY = Annotated[Session, Depends(get_db)]
 
 
 @router.get(
-    "/todos", response_model=todo.TodoListResponse, status_code=status.HTTP_200_OK
+    "/todos", response_model=todo_schema.TodoListResponse, status_code=status.HTTP_200_OK
 )
 async def get_all_todos(db: DB_DEPENDENCY):
-    books = db.query(models.Todo).all()
+    books = db.query(todo_model.Todo).all()
     return {
         "status": "success",
         "length": len(books),
@@ -34,11 +34,11 @@ async def get_all_todos(db: DB_DEPENDENCY):
 
 @router.get(
     "/todos/{id}",
-    response_model=todo.TodoSingleResponse,
+    response_model=todo_schema.TodoSingleResponse,
     status_code=status.HTTP_200_OK,
 )
 async def get_todo_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
-    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+    todo = db.query(todo_model.Todo).filter(todo_model.Todo.id == id).first()
     if todo is not None:
         return {
             "status": "success",
@@ -47,9 +47,9 @@ async def get_todo_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail="Todo not found")
 
 
-@router.post("/todos", response_model=todo.TodoSingleResponse)
-async def create_todo(db: DB_DEPENDENCY, body: todo.TodoRequest):
-    new_todo = models.Todo(**body.model_dump())
+@router.post("/todos", response_model=todo_schema.TodoSingleResponse)
+async def create_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest):
+    new_todo = todo_model.Todo(**body.model_dump())
     db.add(new_todo)
     db.commit()
     db.refresh(new_todo)
@@ -60,9 +60,9 @@ async def create_todo(db: DB_DEPENDENCY, body: todo.TodoRequest):
     }
 
 
-@router.put("/todos/{id}", response_model=todo.TodoSingleResponse)
-async def update_todo(db: DB_DEPENDENCY, body: todo.TodoRequest, id: int = Path(gt=0)):
-    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+@router.put("/todos/{id}", response_model=todo_schema.TodoSingleResponse)
+async def update_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest, id: int = Path(gt=0)):
+    todo = db.query(todo_model.Todo).filter(todo_model.Todo.id == id).first()
 
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
@@ -85,9 +85,9 @@ async def update_todo(db: DB_DEPENDENCY, body: todo.TodoRequest, id: int = Path(
 
 @router.delete("/todos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(db: DB_DEPENDENCY, id: int = Path(gt=0)):
-    todo = db.query(models.Todo).filter(models.Todo.id == id).first()
+    todo = db.query(todo_model.Todo).filter(todo_model.Todo.id == id).first()
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
-    db.query(models.Todo).filter(models.Todo.id == id).delete()
+    db.query(todo_model.Todo).filter(todo_model.Todo.id == id).delete()
 
     db.commit()

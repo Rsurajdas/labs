@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Text, Boolean
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, Boolean
 
 
 class Todo(Base):
@@ -10,3 +10,4 @@ class Todo(Base):
     description = Column(Text)
     priority = Column(Integer, nullable=False)
     complete = Column(Boolean, default=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
