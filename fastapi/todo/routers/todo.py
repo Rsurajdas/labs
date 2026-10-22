@@ -2,26 +2,20 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, Path
 from models import todo as todo_model
-from database import SessionLocal
+from database import get_db
 from starlette import status
 from schemas import todo as todo_schema
 
 router = APIRouter()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 DB_DEPENDENCY = Annotated[Session, Depends(get_db)]
 
 
 @router.get(
-    "/todos", response_model=todo_schema.TodoListResponse, status_code=status.HTTP_200_OK
+    "/todos",
+    response_model=todo_schema.TodoListResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def get_all_todos(db: DB_DEPENDENCY):
     books = db.query(todo_model.Todo).all()
@@ -61,7 +55,9 @@ async def create_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest):
 
 
 @router.put("/todos/{id}", response_model=todo_schema.TodoSingleResponse)
-async def update_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest, id: int = Path(gt=0)):
+async def update_todo(
+    db: DB_DEPENDENCY, body: todo_schema.TodoRequest, id: int = Path(gt=0)
+):
     todo = db.query(todo_model.Todo).filter(todo_model.Todo.id == id).first()
 
     if todo is None:
