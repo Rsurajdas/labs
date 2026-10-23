@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Path
 from models import todo as todo_model
-from database import get_db, DB_DEPENDENCY
+from database import DB_DEPENDENCY
 from starlette import status
 from schemas import todo as todo_schema
 

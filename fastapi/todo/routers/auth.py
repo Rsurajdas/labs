@@ -1,14 +1,33 @@
-from turtle import title
-
 from fastapi import APIRouter
-from database import get_db, DB_DEPENDENCY
+from database import DB_DEPENDENCY
 from schemas import auth as auth_schema
 from models import auth as auth_model
+import bcrypt
 
 router = APIRouter()
 
 
-@router.post("/auth/")
+def hash_password(password: str):
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_hashed_password(plain_password: str, hashed_password: str):
+    return bcrypt.checkpw(
+        plain_password.encode("utf-8"), hashed_password.encode("utf-8")
+    )
+
+
+@router.get("/users", response_model=auth_schema.UserListResponse)
+async def get_all_user(db: DB_DEPENDENCY):
+    users = db.query(auth_model.User).all()
+    return {
+        "status": "success",
+        "length": len(users),
+        "data": users,
+    }
+
+
+@router.post("/auth/", response_model=auth_schema.AuthResponse)
 async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     new_user = auth_model.User(
         email=body.email,
@@ -16,7 +35,7 @@ async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
         first_name=body.first_name,
         last_name=body.last_name,
         role=body.role,
-        hashed_password=body.password,
+        hashed_password=hash_password(body.password),
         is_active=body.is_active or True,
     )
     db.add(new_user)
