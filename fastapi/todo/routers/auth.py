@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from database import DB_DEPENDENCY
 from schemas import auth as auth_schema
 from models import auth as auth_model
@@ -27,8 +27,8 @@ async def get_all_user(db: DB_DEPENDENCY):
     }
 
 
-@router.post("/auth/", response_model=auth_schema.AuthResponse)
-async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
+@router.post("/auth/register", response_model=auth_schema.AuthResponse)
+async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     new_user = auth_model.User(
         email=body.email,
         username=body.username,
@@ -41,4 +41,17 @@ async def create_user(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return "User added successfully!"
+    return {"status": "success", "message": "User added successfully!"}
+
+
+@router.post("/auth/login")
+async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
+    user = db.query(auth_model.User).filter_by(email=body.email).first()
+    is_valid_password = verify_hashed_password(body.password, user.hashed_password)
+    if user is None or not is_valid_password:
+        raise HTTPException(
+            status_code=404, detail="Please provide valid email or password"
+        )
+    if user.is_valid:
+        raise HTTPException(status_code=404, detail="User account is inactive")
+    return {"status": "success", "message": "User logged in successfully!"}

@@ -15,6 +15,11 @@ class UserRequest(UserBase):
     pass
 
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
 class UserReponse(UserBase):
     id: int
 
