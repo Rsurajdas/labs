@@ -1,4 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from database import DB_DEPENDENCY
 from schemas import auth as auth_schema
 from models import auth as auth_model
@@ -15,6 +18,33 @@ def verify_hashed_password(plain_password: str, hashed_password: str):
     return bcrypt.checkpw(
         plain_password.encode("utf-8"), hashed_password.encode("utf-8")
     )
+
+
+def authenticate_user(
+    password: str,
+    db: DB_DEPENDENCY,
+    username: str | None = None,
+    email: str | None = None,
+):
+    if bool(username) == bool(email):
+        return False
+
+    if username:
+        condition = auth_model.User.username == username
+    else:
+        condition = auth_model.User.email == email
+
+    user = (
+        db.query(auth_model.User)
+        .filter(condition, auth_model.User.is_active == True)
+        .first()
+    )
+
+    if user is None:
+        return False
+    if not verify_hashed_password(password, user.hashed_password):
+        return False
+    return True
 
 
 @router.get("/users", response_model=auth_schema.UserListResponse)
@@ -46,12 +76,21 @@ async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
 
 @router.post("/auth/login")
 async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
-    user = (
-        db.query(auth_model.User)
-        .filter(auth_model.User.email == body.email, auth_model.User.is_active == True)
-        .first()
-    )
-    if user is None or not verify_hashed_password(body.password, user.hashed_password):
+    """This approach uses a custom Pydantic request model"""
+    is_authenticate = authenticate_user(body.password, db, None, body.email)
+    if not is_authenticate:
+        raise HTTPException(
+            status_code=401, detail="Please provide valid email or password"
+        )
+    return {"status": "success", "message": "User logged in successfully!"}
+
+
+@router.post("/auth/sign_in")
+async def sign_in(
+    formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
+):
+    is_authenticate = authenticate_user(formdata.password, db, formdata.username, None)
+    if not is_authenticate:
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
