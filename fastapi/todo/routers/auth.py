@@ -41,10 +41,10 @@ def authenticate_user(
     )
 
     if user is None:
-        return False
+        return None
     if not verify_hashed_password(password, user.hashed_password):
-        return False
-    return True
+        return None
+    return user
 
 
 @router.get("/users", response_model=auth_schema.UserListResponse)
@@ -77,8 +77,8 @@ async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
 @router.post("/auth/login")
 async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
     """This approach uses a custom Pydantic request model"""
-    is_authenticate = authenticate_user(body.password, db, None, body.email)
-    if not is_authenticate:
+    user = authenticate_user(body.password, db, None, body.email)
+    if user is None:
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
@@ -89,8 +89,8 @@ async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
 async def sign_in(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
 ):
-    is_authenticate = authenticate_user(formdata.password, db, formdata.username, None)
-    if not is_authenticate:
+    user = authenticate_user(formdata.password, db, formdata.username, None)
+    if user is None:
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
