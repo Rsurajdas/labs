@@ -2,17 +2,18 @@ from datetime import timedelta, timezone, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from database import DB_DEPENDENCY
 from schemas import auth as auth_schema
 from models import auth as auth_model
 import bcrypt
-from jose import jwt
+from jose import JWTError, jwt
 
 router = APIRouter()
 
 SECRET_KEY = "a1ede91fecc536651b2ef78950e55d715a0858d53eb7241d529794f33103f4c6"
 ALGORIHM = "HS256"
+oauth2_beater = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def hash_password(password: str):
@@ -57,6 +58,18 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORIHM)
+
+
+def decode_jwt(token: Annotated[str, Depends(oauth2_beater)]):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORIHM)
+        username: str = payload.get("sub")
+        user_id: int = payload.get("id")
+        if username is None or user_id is None:
+            raise HTTPException(status_code=401, detail="Token is invalid!")
+        return {"username": username, "id": user_id}
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token is invalid!")
 
 
 @router.get("/users", response_model=auth_schema.UserListResponse)
