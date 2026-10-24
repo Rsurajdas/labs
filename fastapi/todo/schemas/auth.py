@@ -35,3 +35,4 @@ class UserListResponse(BaseModel):
 class AuthResponse(BaseModel):
     status: str
     message: str
+    token: str

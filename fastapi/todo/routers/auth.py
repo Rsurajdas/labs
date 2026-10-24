@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -6,8 +7,12 @@ from database import DB_DEPENDENCY
 from schemas import auth as auth_schema
 from models import auth as auth_model
 import bcrypt
+from jose import jwt
 
 router = APIRouter()
+
+SECRET_KEY = "a1ede91fecc536651b2ef78950e55d715a0858d53eb7241d529794f33103f4c6"
+ALGORIHM = "HS256"
 
 
 def hash_password(password: str):
@@ -47,6 +52,13 @@ def authenticate_user(
     return user
 
 
+def create_access_token(username: str, user_id: int, expires_delta: timedelta):
+    encode = {"sub": username, "id": user_id}
+    expires = datetime.now(timezone.utc) + expires_delta
+    encode.update({"exp": expires})
+    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORIHM)
+
+
 @router.get("/users", response_model=auth_schema.UserListResponse)
 async def get_all_user(db: DB_DEPENDENCY):
     users = db.query(auth_model.User).all()
@@ -74,7 +86,7 @@ async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     return {"status": "success", "message": "User added successfully!"}
 
 
-@router.post("/auth/login")
+@router.post("/auth/login", response_model=auth_schema.AuthResponse)
 async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
     """This approach uses a custom Pydantic request model"""
     user = authenticate_user(body.password, db, None, body.email)
@@ -82,10 +94,15 @@ async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
-    return {"status": "success", "message": "User logged in successfully!"}
+    token = create_access_token(user.username, user.id, timedelta(minutes=30))
+    return {
+        "status": "success",
+        "message": "User logged in successfully!",
+        "token": token,
+    }
 
 
-@router.post("/auth/sign_in")
+@router.post("/auth/sign_in", response_model=auth_schema.AuthResponse)
 async def sign_in(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
 ):
@@ -94,4 +111,9 @@ async def sign_in(
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
-    return {"status": "success", "message": "User logged in successfully!"}
+    token = create_access_token(user.username, user.id, timedelta(minutes=30))
+    return {
+        "status": "success",
+        "message": "User logged in successfully!",
+        "token": token,
+    }
