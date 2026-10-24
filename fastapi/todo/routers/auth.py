@@ -13,7 +13,7 @@ router = APIRouter()
 
 SECRET_KEY = "a1ede91fecc536651b2ef78950e55d715a0858d53eb7241d529794f33103f4c6"
 ALGORIHM = "HS256"
-oauth2_beater = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def hash_password(password: str):
@@ -60,7 +60,7 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORIHM)
 
 
-def decode_jwt(token: Annotated[str, Depends(oauth2_beater)]):
+def decode_jwt(token: Annotated[str, Depends(oauth2_bearer)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORIHM)
         username: str = payload.get("sub")
