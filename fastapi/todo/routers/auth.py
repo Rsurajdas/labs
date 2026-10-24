@@ -46,11 +46,13 @@ async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
 
 @router.post("/auth/login")
 async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
-    user = db.query(auth_model.User).filter_by(email=body.email).first()
+    user = (
+        db.query(auth_model.User)
+        .filter(auth_model.User.email == body.email, auth_model.User.is_active == True)
+        .first()
+    )
     if user is None or not verify_hashed_password(body.password, user.hashed_password):
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
-    if not user.is_valid:
-        raise HTTPException(status_code=401, detail="User account is inactive")
     return {"status": "success", "message": "User logged in successfully!"}
