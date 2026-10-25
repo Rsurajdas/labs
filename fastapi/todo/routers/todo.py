@@ -4,11 +4,11 @@ from database import DB_DEPENDENCY
 from starlette import status
 from schemas import todo as todo_schema
 
-router = APIRouter()
+router = APIRouter(prefix="/todos", tags=["todo"])
 
 
 @router.get(
-    "/todos",
+    "/",
     response_model=todo_schema.TodoListResponse,
     status_code=status.HTTP_200_OK,
 )
@@ -22,7 +22,7 @@ async def get_all_todos(db: DB_DEPENDENCY):
 
 
 @router.get(
-    "/todos/{id}",
+    "/{id}",
     response_model=todo_schema.TodoSingleResponse,
     status_code=status.HTTP_200_OK,
 )
@@ -36,7 +36,7 @@ async def get_todo_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail="Todo not found")
 
 
-@router.post("/todos", response_model=todo_schema.TodoSingleResponse)
+@router.post("/", response_model=todo_schema.TodoSingleResponse)
 async def create_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest):
     new_todo = todo_model.Todo(**body.model_dump())
     db.add(new_todo)
@@ -49,7 +49,7 @@ async def create_todo(db: DB_DEPENDENCY, body: todo_schema.TodoRequest):
     }
 
 
-@router.put("/todos/{id}", response_model=todo_schema.TodoSingleResponse)
+@router.put("/{id}", response_model=todo_schema.TodoSingleResponse)
 async def update_todo(
     db: DB_DEPENDENCY, body: todo_schema.TodoRequest, id: int = Path(gt=0)
 ):
@@ -74,7 +74,7 @@ async def update_todo(
     }
 
 
-@router.delete("/todos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     todo = db.query(todo_model.Todo).filter(todo_model.Todo.id == id).first()
     if todo is None:
