@@ -6,7 +6,7 @@ class UserBase(BaseModel):
     username: str
     first_name: str
     last_name: str
-    password: str
+    password: str | None = None
     is_active: bool | None = None
     role: str
 

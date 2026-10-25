@@ -9,11 +9,11 @@ from models import auth as auth_model
 import bcrypt
 from jose import JWTError, jwt
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 SECRET_KEY = "a1ede91fecc536651b2ef78950e55d715a0858d53eb7241d529794f33103f4c6"
 ALGORIHM = "HS256"
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/sign_in")
 
 
 def hash_password(password: str):
@@ -82,7 +82,7 @@ async def get_all_user(db: DB_DEPENDENCY):
     }
 
 
-@router.post("/auth/register", response_model=auth_schema.AuthResponse)
+@router.post("/register", response_model=auth_schema.AuthResponse)
 async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     new_user = auth_model.User(
         email=body.email,
@@ -99,7 +99,7 @@ async def register(db: DB_DEPENDENCY, body: auth_schema.UserRequest):
     return {"status": "success", "message": "User added successfully!"}
 
 
-@router.post("/auth/login", response_model=auth_schema.AuthResponse)
+@router.post("/login", response_model=auth_schema.AuthResponse)
 async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
     """This approach uses a custom Pydantic request model"""
     user = authenticate_user(body.password, db, None, body.email)
@@ -115,7 +115,7 @@ async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
     }
 
 
-@router.post("/auth/sign_in", response_model=auth_schema.AuthResponse)
+@router.post("/sign_in", response_model=auth_schema.AuthResponse)
 async def sign_in(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
 ):
