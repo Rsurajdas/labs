@@ -1,10 +1,9 @@
 from typing import Annotated
-
+from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
-from fastapi import Depends
 
-DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/expenses"
+DATABASE_URL = "postgresql+psycopg://postgres:suraj123@localhost:5432/expenses"
 
 engine = create_engine(DATABASE_URL)
 
