@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from routers import auth, category, expense
+from routers import auth, categories, expenses
 
 app = FastAPI()
 app.include_router(auth.router)
-app.include_router(category.router)
-app.include_router(expense.router)
+app.include_router(categories.router)
+app.include_router(expenses.router)
