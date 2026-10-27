@@ -8,3 +8,7 @@ class CategoryCreate(BaseModel):
 
 class CategoryResponse(CategoryCreate):
     id: int
+
+
+class CategoryListResponse(BaseModel):
+    data: list[CategoryResponse]
