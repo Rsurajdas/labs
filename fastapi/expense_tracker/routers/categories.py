@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from sqlalchemy import OrderByList
 from starlette import status
 
 from database import DB_DEPENDENCY
@@ -19,7 +20,7 @@ async def create_category(db: DB_DEPENDENCY, body: CategoryCreate):
 
 @router.get("/", response_model=CategoryListResponse, status_code=status.HTTP_200_OK)
 async def get_all_categories(db: DB_DEPENDENCY):
-    categories = db.query(Category).all()
+    categories = db.query(Category).order_by(Category.name.asc()).all()
     return {"data": categories}
 
 
