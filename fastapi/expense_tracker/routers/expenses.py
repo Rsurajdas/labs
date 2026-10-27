@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 
 from database import DB_DEPENDENCY
 from models.expenses import Expense
-from schemas.expenses import ExpenseListResponse
+from schemas.expenses import ExpenseCreate, ExpenseListResponse, ExpenseResponse
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -25,3 +25,12 @@ async def get_all_expenses(
 
     expenses = query.order_by(Expense.spent_on.desc()).all()
     return {"count": len(expenses), "data": expenses}
+
+
+@router.post("/", response_model=ExpenseResponse)
+async def create_expense(db: DB_DEPENDENCY, body: ExpenseCreate):
+    new_expense = Expense(**body.model_dump())
+    db.add(new_expense)
+    db.commit()
+    db.refresh(new_expense)
+    return new_expense
