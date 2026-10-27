@@ -24,5 +24,5 @@ class Expense(Base):
     spent_on = Column(Date, nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"))
     user_id = Column(
-        Integer, ForeignKey("users.id"), nullable=False, ondelete="CASCADE"
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
