@@ -1,3 +1,33 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from starlette import status
 
-router = APIRouter()
+from database import DB_DEPENDENCY
+from models.categories import Category
+from schemas.categories import CategoryCreate, CategoryResponse, CategoryListResponse
+
+router = APIRouter(prefix="/categories", tags=["categories"])
+
+
+@router.post("/", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
+async def create_category(db: DB_DEPENDENCY, body: CategoryCreate):
+    new_category = Category(**body.model_dump())
+    db.add(new_category)
+    db.commit()
+    db.refresh(new_category)
+    return new_category
+
+
+@router.get("/", response_model=CategoryListResponse, status_code=status.HTTP_200_OK)
+async def get_all_categories(db: DB_DEPENDENCY):
+    categories = db.query(Category).all()
+    return {"data": categories}
+
+
+@router.get(
+    "/{category_id}", response_model=CategoryResponse, status_code=status.HTTP_200_OK
+)
+async def get_category_by_id(db: DB_DEPENDENCY, category_id: int):
+    if category_id is None:
+        raise HTTPException(status_code=404, detail="Category not found!")
+    category = db.query(Category).filter(Category.id == category_id).first()
+    return category
