@@ -8,7 +8,8 @@ DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/expenses"
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+SessionLocal = sessionmaker(bind=engine, autoflush=False)
+# removed autocommit=False since its deprecated in sqlalchemy 2.0
 
 Base = declarative_base()
 
