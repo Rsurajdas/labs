@@ -42,7 +42,3 @@ def register(user: UserCreate, db: DB_DEPENDENCY):
     db.add(new_user)
     db.commit()
     return new_user
-
-
-# response_model should be UserResponse
-#
