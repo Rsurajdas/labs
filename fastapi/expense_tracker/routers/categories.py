@@ -28,7 +28,7 @@ async def get_all_categories(db: DB_DEPENDENCY):
     "/{category_id}", response_model=CategoryResponse, status_code=status.HTTP_200_OK
 )
 async def get_category_by_id(db: DB_DEPENDENCY, category_id: int):
-    if category_id is None:
-        raise HTTPException(status_code=404, detail="Category not found!")
     category = db.query(Category).filter(Category.id == category_id).first()
+    if category is None:
+        raise HTTPException(status_code=404, detail="Category not found!")
     return category
