@@ -23,11 +23,15 @@ async def get_all_categories(db: DB_DEPENDENCY):
     return {"data": categories}
 
 
+def find_category(db: DB_DEPENDENCY, category_id: int) -> Category | None:
+    return db.query(Category).filter(Category.id == category_id).first()
+
+
 @router.get(
     "/{category_id}", response_model=CategoryResponse, status_code=status.HTTP_200_OK
 )
 async def get_category_by_id(db: DB_DEPENDENCY, category_id: int):
-    category = db.query(Category).filter(Category.id == category_id).first()
+    category = find_category(db, category_id)
     if category is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
