@@ -7,10 +7,16 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8)
 
 
-class UserResponse(UserCreate):
+class UserResponse(BaseModel):
     id: int
-    password: None
+    email: str
+    username: str
     is_active: bool | None = Field(default=True)
+
+
+class UserListResponse(BaseModel):
+    count: int
+    data: list[UserResponse]
 
 
 class Token(BaseModel):
