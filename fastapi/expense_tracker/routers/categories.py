@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import OrderByList
 from starlette import status
 
 from database import DB_DEPENDENCY
@@ -30,5 +29,7 @@ async def get_all_categories(db: DB_DEPENDENCY):
 async def get_category_by_id(db: DB_DEPENDENCY, category_id: int):
     category = db.query(Category).filter(Category.id == category_id).first()
     if category is None:
-        raise HTTPException(status_code=404, detail="Category not found!")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
+        )
     return category
