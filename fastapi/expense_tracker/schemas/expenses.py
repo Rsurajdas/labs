@@ -1,6 +1,6 @@
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ExpenseCreate(BaseModel):
@@ -18,6 +18,14 @@ class ExpenseResponse(ExpenseCreate):
 class ExpenseListResponse(BaseModel):
     count: int
     data: list[ExpenseResponse]
+
+
+class ExpenseOut(BaseModel):
+    id: int
+    title: str
+    amount: float
+    category_id: int | None
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Q -> 03

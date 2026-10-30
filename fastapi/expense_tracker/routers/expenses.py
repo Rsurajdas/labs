@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, Path, Query
 from starlette import status
 
@@ -5,7 +7,12 @@ from database import DB_DEPENDENCY
 from models.expenses import Expense
 from routers.auth import find_user
 from routers.categories import find_category
-from schemas.expenses import ExpenseCreate, ExpenseListResponse, ExpenseResponse
+from schemas.expenses import (
+    ExpenseCreate,
+    ExpenseListResponse,
+    ExpenseOut,
+    ExpenseResponse,
+)
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -35,7 +42,7 @@ def find_expense(db: DB_DEPENDENCY, expense_id: int) -> Expense | None:
 
 
 @router.get("/{expense_id}", response_model=ExpenseResponse)
-async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: int = Path(gt=0)):
+async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
     expense = find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(
@@ -95,11 +102,13 @@ async def update_expense_by_id(
 
 
 @router.delete("/{expense_id}")
-async def delete_expense_by_id(db: DB_DEPENDENCY, expense_id: int = Path(gt=0)):
+async def delete_expense_by_id(
+    db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]
+):
     expense = find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Expense not found"
         )
-    db.query(Expense).filter(Expense.id == expense_id).delete()
+    db.delete(expense)
     db.commit()
