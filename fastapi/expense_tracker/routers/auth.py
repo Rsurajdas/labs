@@ -32,8 +32,10 @@ def verify_hashed_password(plain_password: str, hashed_password: str):
 
 def authenticate_user(username: str, password: str, db):
     user = db.query(User).filter(User.username == username).first()
-    if verify_hashed_password(password, user.hashed_password):
-        return user
+    if user is None:
+        return None
+    if not verify_hashed_password(password, user.hashed_password):
+        return None
     return user
 
 
