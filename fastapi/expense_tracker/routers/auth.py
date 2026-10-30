@@ -3,7 +3,7 @@ from typing import Annotated
 
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Path
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from starlette import status
 
@@ -14,6 +14,8 @@ from schemas.auth import Token, UserCreate, UserListResponse, UserResponse
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 SECRET_KEY = "0ec67f03f963dc09cb8516f25656bbb3512a90babca440ac9fab3f84b8ae631a"
+ALGORITHM = "HS256"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/sign_in")
 
 
 def find_user(db: DB_DEPENDENCY, user_id: int) -> User | None:
@@ -43,7 +45,25 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     encode = {"sub": username, "id": user_id}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
-    return jwt.encode(encode, SECRET_KEY, algorithm="HS256")
+    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def decode_jwt(token: Annotated[str, Depends(oauth2_scheme)]):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        username = payload.get("sub")
+        user_id = payload.get("id")
+        if username is None or user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+            )
+        return {"username": username, "user_id": user_id}
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
 
 
 @router.get("/users/", response_model=UserListResponse)
@@ -95,3 +115,15 @@ def sign_in(
         user.username, user.id, expires_delta=timedelta(minutes=30)
     )
     return {"access_token": token, "token_type": "bearer"}
+
+
+# authenticate_user function
+
+# 1. Add a user existence check after the database query. Otherwise, `verify_hashed_password()` may throw an error if the user is not found.
+# 2. The argument order in `bcrypt.checkpw()` is incorrect. It expects the plain password first and the hashed password second.
+
+# sign_in function
+
+# 1. The type of `form_data` is incorrect. It should be `Annotated[OAuth2PasswordRequestForm, Depends()]`.
+# 2. The wrong argument is passed to `authenticate_user()`. It expects `username`, but `email` is being passed.
+# 3. The HTTPException status code is incorrect. It should be `401 (Unauthorized)`.
