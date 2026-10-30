@@ -13,7 +13,7 @@ def find_user(db: DB_DEPENDENCY, user_id: int) -> User | None:
     return db.query(User).filter(User.id == user_id, User.is_active == True).first()
 
 
-@router.get("/user/", response_model=UserListResponse)
+@router.get("/users/", response_model=UserListResponse)
 async def get_all_users(db: DB_DEPENDENCY):
     users = db.query(User).all()
     return {"count": len(users), "data": users}
@@ -41,4 +41,11 @@ def register(user: UserCreate, db: DB_DEPENDENCY):
     )
     db.add(new_user)
     db.commit()
+    db.refresh(new_user)
     return new_user
+
+
+# 1. The `response_model` should be `UserResponse`, not `UserCreate`.
+# 2. `db.refresh(new_user)` is missing after creating the user.
+# 3. Missing encoding/decoding methods: use `.decode("utf-8")` with `bcrypt.hashpw()` and `.encode("utf-8")` with `user.password`.
+# 4. `is_active` is set to `False`, which means newly created users will be inactive. Set it to `True` if users should be active by default.
