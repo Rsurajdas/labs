@@ -11,13 +11,20 @@ class ExpenseCreate(BaseModel):
     user_id: int = Field(gt=0)
 
 
-class ExpenseResponse(ExpenseCreate):
+class ExpenseResponse(BaseModel):
     id: int
+    title: str
+    amount: float
+    spent_on: date
+    category_id: int | None
+    user_id: int
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ExpenseListResponse(BaseModel):
     count: int
     data: list[ExpenseResponse]
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ExpenseOut(BaseModel):

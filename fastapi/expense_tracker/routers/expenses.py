@@ -41,6 +41,13 @@ def find_expense(db: DB_DEPENDENCY, expense_id: int) -> Expense | None:
     return db.query(Expense).filter(Expense.id == expense_id).first()
 
 
+def check_references(db, body: ExpenseCreate):
+    if body.category_id is not None and find_category(db, body.category_id) is None:
+        raise HTTPException(status_code=404, detail="Category not found")
+    if find_user(db, body.user_id) is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+
 @router.get("/{expense_id}", response_model=ExpenseOut)
 async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
     expense = find_expense(db, expense_id)
@@ -53,16 +60,7 @@ async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(g
 
 @router.post("/", response_model=ExpenseResponse, status_code=status.HTTP_201_CREATED)
 async def create_expense(db: DB_DEPENDENCY, body: ExpenseCreate):
-    category = find_category(db, body.category_id)
-    if category is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
-        )
-    user = find_user(db, body.user_id)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+    check_references(db, body)
     new_expense = Expense(**body.model_dump())
     db.add(new_expense)
     db.commit()
@@ -71,40 +69,22 @@ async def create_expense(db: DB_DEPENDENCY, body: ExpenseCreate):
 
 
 @router.put("/{expense_id}", response_model=ExpenseResponse)
-async def update_expense_by_id(
+async def update_expense(
     db: DB_DEPENDENCY, body: ExpenseCreate, expense_id: Annotated[int, Path(gt=0)]
 ):
-    category = find_category(db, body.category_id)
-    if category is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
-        )
-    user = find_user(db, body.user_id)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
     expense = find_expense(db, expense_id)
     if expense is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Expense not found"
-        )
-    expense.title = body.title
-    expense.amount = body.amount
-    expense.spent_on = body.spent_on
-    expense.category_id = body.category_id
-    expense.user_id = body.user_id
-
-    db.add(expense)
+        raise HTTPException(status_code=404, detail="Expense not found")
+    check_references(db, body)
+    for field, value in body.model_dump().items():
+        setattr(expense, field, value)
     db.commit()
     db.refresh(expense)
     return expense
 
 
 @router.delete("/{expense_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_expense_by_id(
-    db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]
-):
+async def delete_expense(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
     expense = find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(

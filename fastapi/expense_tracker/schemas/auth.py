@@ -1,9 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserCreate(BaseModel):
     email: str
-    username: str = Field(min_length=3, max_length=100)
+    username: str = Field(min_length=3, max_length=50)
     password: str = Field(min_length=8)
 
 
@@ -12,13 +12,16 @@ class UserResponse(BaseModel):
     email: str
     username: str
     is_active: bool | None = Field(default=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserListResponse(BaseModel):
     count: int
     data: list[UserResponse]
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+    model_config = ConfigDict(from_attributes=True)

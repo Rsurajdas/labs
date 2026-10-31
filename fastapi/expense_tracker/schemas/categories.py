@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CategoryCreate(BaseModel):
@@ -6,9 +6,13 @@ class CategoryCreate(BaseModel):
     description: str | None = Field(max_length=200, default=None)
 
 
-class CategoryResponse(CategoryCreate):
+class CategoryResponse(BaseModel):
     id: int
+    name: str
+    description: str
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CategoryListResponse(BaseModel):
     data: list[CategoryResponse]
+    model_config = ConfigDict(from_attributes=True)
