@@ -37,7 +37,7 @@ async def get_all_expenses(
     return {"count": len(expenses), "data": expenses}
 
 
-def find_expense(db: DB_DEPENDENCY, expense_id: int) -> Expense | None:
+def _find_expense(db: DB_DEPENDENCY, expense_id: int) -> Expense | None:
     return db.query(Expense).filter(Expense.id == expense_id).first()
 
 
@@ -50,7 +50,7 @@ def check_references(db, body: ExpenseCreate):
 
 @router.get("/{expense_id}", response_model=ExpenseOut)
 async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
-    expense = find_expense(db, expense_id)
+    expense = _find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Expense not found"
@@ -72,7 +72,7 @@ async def create_expense(db: DB_DEPENDENCY, body: ExpenseCreate):
 async def update_expense(
     db: DB_DEPENDENCY, body: ExpenseCreate, expense_id: Annotated[int, Path(gt=0)]
 ):
-    expense = find_expense(db, expense_id)
+    expense = _find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
     check_references(db, body)
@@ -85,7 +85,7 @@ async def update_expense(
 
 @router.delete("/{expense_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_expense(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
-    expense = find_expense(db, expense_id)
+    expense = _find_expense(db, expense_id)
     if expense is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Expense not found"
