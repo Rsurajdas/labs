@@ -41,7 +41,7 @@ def find_expense(db: DB_DEPENDENCY, expense_id: int) -> Expense | None:
     return db.query(Expense).filter(Expense.id == expense_id).first()
 
 
-@router.get("/{expense_id}", response_model=ExpenseResponse)
+@router.get("/{expense_id}", response_model=ExpenseOut)
 async def get_expense_by_id(db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]):
     expense = find_expense(db, expense_id)
     if expense is None:
@@ -72,7 +72,7 @@ async def create_expense(db: DB_DEPENDENCY, body: ExpenseCreate):
 
 @router.put("/{expense_id}", response_model=ExpenseResponse)
 async def update_expense_by_id(
-    db: DB_DEPENDENCY, body: ExpenseCreate, expense_id: int = Path(gt=0)
+    db: DB_DEPENDENCY, body: ExpenseCreate, expense_id: Annotated[int, Path(gt=0)]
 ):
     category = find_category(db, body.category_id)
     if category is None:
