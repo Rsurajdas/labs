@@ -41,3 +41,16 @@ async def get_category_by_id(
             status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
         )
     return category
+
+
+@router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_category_by_id(
+    db: DB_DEPENDENCY, category_id: Annotated[int, Path(gt=0)]
+):
+    category = find_category(db, category_id)
+    if category is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
+        )
+    db.delete(category)
+    db.commit()
