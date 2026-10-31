@@ -13,12 +13,29 @@ from schemas.auth import Token, UserCreate, UserListResponse, UserResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+# Secret key used to sign and verify JWT tokens.
+# Keep this value secure and store it in environment variables.
 SECRET_KEY = "0ec67f03f963dc09cb8516f25656bbb3512a90babca440ac9fab3f84b8ae631a"
+
+# Algorithm used for signing and verifying JWT tokens.
 ALGORITHM = "HS256"
+
+# OAuth2 scheme for extracting the Bearer token from incoming requests.
+# The tokenUrl points to the authentication endpoint used to obtain access tokens.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/sign_in")
 
 
 def find_user(db: DB_DEPENDENCY, user_id: int) -> User | None:
+    """
+    Retrieve an active user by their ID.
+
+    Args:
+        db: Database session dependency.
+        user_id: Unique identifier of the user.
+
+    Returns:
+        User | None: The matching active user if found, otherwise None.
+    """
     return db.query(User).filter(User.id == user_id, User.is_active == True).first()
 
 
@@ -27,6 +44,16 @@ def create_hashed_password(password: str):
 
 
 def verify_hashed_password(plain_password: str, hashed_password: str):
+    """
+    Verify a plain-text password against its hashed version.
+
+    Args:
+        plain_password: The plain-text password provided by the user.
+        hashed_password: The stored bcrypt-hashed password.
+
+    Returns:
+        bool: True if the password matches the hash, otherwise False.
+    """
     return bcrypt.checkpw(
         plain_password.encode("utf-8"), hashed_password.encode("utf-8")
     )
