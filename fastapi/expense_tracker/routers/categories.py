@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, Path
 from starlette import status
 
 from database import DB_DEPENDENCY
@@ -30,7 +32,9 @@ def find_category(db: DB_DEPENDENCY, category_id: int) -> Category | None:
 @router.get(
     "/{category_id}", response_model=CategoryResponse, status_code=status.HTTP_200_OK
 )
-async def get_category_by_id(db: DB_DEPENDENCY, category_id: int):
+async def get_category_by_id(
+    db: DB_DEPENDENCY, category_id: Annotated[int, Path(gt=0)]
+):
     category = find_category(db, category_id)
     if category is None:
         raise HTTPException(
