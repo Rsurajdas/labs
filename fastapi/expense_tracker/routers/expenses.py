@@ -101,7 +101,7 @@ async def update_expense_by_id(
     return expense
 
 
-@router.delete("/{expense_id}")
+@router.delete("/{expense_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_expense_by_id(
     db: DB_DEPENDENCY, expense_id: Annotated[int, Path(gt=0)]
 ):
@@ -112,3 +112,71 @@ async def delete_expense_by_id(
         )
     db.delete(expense)
     db.commit()
+
+
+#  Q11
+# 1. Status code = 200
+# JSON body
+# {
+#   "id": 3,
+#   "title": "Electricity bill",
+#   "amount": 1840.5,
+#   "category_id": 3
+# }
+#
+# 2. Status code = 200
+# JSON body
+# {
+#   "id": 6,
+#   "title": "Misc cash",
+#   "amount": 100,
+#   "category_id": 3
+# }
+#
+# 3. Status code = 422
+# JSON body
+# {
+#   "detail": [
+#     {
+#       "type": "greater_than",
+#       "loc": [
+#         "path",
+#         "expense_id"
+#       ],
+#       "msg": "Input should be greater than 0",
+#       "input": "0",
+#       "ctx": {
+#         "gt": 0
+#       }
+#     }
+#   ]
+# }
+#
+# 4. Status code = 204
+# JSON body
+# null
+#
+# 5. Status code = 404
+# JSON body
+# {
+#   "detail": "Expense not found"
+# }
+#
+# 6. Status code = 422
+# JSON body
+# {
+#   "detail": [
+#     {
+#       "type": "greater_than",
+#       "loc": [
+#         "path",
+#         "expense_id"
+#       ],
+#       "msg": "Input should be greater than 0",
+#       "input": "0",
+#       "ctx": {
+#         "gt": 0
+#       }
+#     }
+#   ]
+# }
