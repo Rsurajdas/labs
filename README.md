@@ -8,12 +8,17 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **FastAPI expense tracker:** `fastapi/expense_tracker/` is a standalone app (`users`, `categories`, `expenses` on PostgreSQL), laid out like the todo API with `models/`, `schemas/`, and `routers/` packages. The tables are created by `schema.sql`, not `Base.metadata.create_all()`, and the expense/category routes aren't JWT-protected (`user_id` is passed in the body or query).
+  - **Auth (`/auth`):** `POST /register` hashes passwords with `bcrypt`, `POST /sign_in` takes an `OAuth2PasswordRequestForm` and returns a 30-minute HS256 JWT (`sub`, `id`, `exp`). `authenticate_user` only matches by username and returns `401` on bad credentials; `find_user` filters on `is_active`.
+  - **Categories (`/categories`):** full CRUD ordered by name, `Path(gt=0)`, and 404s.
+  - **Expenses (`/expenses`):** filtered listing (optional `user_id`, `category_id`, `min_amount`, combined with AND, newest first) wrapped in `ExpenseListResponse`, plus create/update/delete. `check_references` validates the optional `category_id` only when supplied and rejects missing or inactive users, and `DELETE` returns `204`.
+  - This is the project behind [Assessment #04](#assessments); the code here reflects the fixes applied after grading.
 - **FastAPI auth (todo API):** `fastapi/todo/` is split into `models/`, `schemas/`, and `routers/` packages, with `APIRouter` prefixes (`/auth`, `/todos`) and a shared `DB_DEPENDENCY = Annotated[Session, Depends(get_db)]`.
   - **Users:** `POST /auth/register` hashes passwords with `bcrypt`, and `GET /auth/users` lists users.
   - **Two ways to log in:** `POST /auth/login` takes a custom Pydantic body (email + password), and `POST /auth/sign_in` takes an `OAuth2PasswordRequestForm` (username + password). Both go through `authenticate_user`, which only matches active users and returns `401` on bad credentials.
   - **JWTs:** a successful login returns a 30-minute HS256 token from `python-jose` (`sub`, `id`, `exp`). `decode_jwt` validates it through `OAuth2PasswordBearer`.
   - **Todos:** full CRUD on `/todos`, with `Field` validation (priority 1–5, length limits), `Path(gt=0)`, 404s, and a `204` on delete. Todos have an `owner_id` foreign key to `users`, but the routes don't depend on `decode_jwt` yet and nothing fills in `owner_id`.
-- **Self-assessments:** graded question sets in `Technical Learning & Assessments/` to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)).
+- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; Assessment #04 lives inside the project it covers, `fastapi/expense_tracker/`.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
 - **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) about wrapper components.
   - `Inputs` extends `ComponentPropsWithoutRef<"input">` and forwards the remaining props with `...props`.
@@ -34,17 +39,19 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 Each set is answered without running the code first, then graded. The scores are kept as a baseline to measure against.
 
-| #  | Date       | Topic                                              | Score        |
-| -- | ---------- | -------------------------------------------------- | ------------ |
-| 01 | 2026-10-17 | Mixed: SQL, TypeScript, Python, JS, FastAPI, React | 3 / 12 (25%) |
-| 02 | 2026-10-17 | TypeScript: aliases, interfaces, unions, generics  | 9 / 12 (75%) |
-| 03 | 2026-10-20 | PostgreSQL: company projects database              | 7 / 12 (58%) |
+| #  | Date       | Topic                                                 | Score        |
+| -- | ---------- | ----------------------------------------------------- | ------------ |
+| 01 | 2026-10-17 | Mixed: SQL, TypeScript, Python, JS, FastAPI, React    | 3 / 12 (25%) |
+| 02 | 2026-10-17 | TypeScript: aliases, interfaces, unions, generics     | 9 / 12 (75%) |
+| 03 | 2026-10-20 | PostgreSQL: company projects database                 | 7 / 12 (58%) |
+| 04 | 2026-10-31 | FastAPI: expense tracker (SQLAlchemy, Pydantic, auth) | 4 / 12 (33%) |
 
 Where points were lost:
 
 - **#01:** two unanswered (React + TS, FastAPI), and several answers that missed one requirement or edge case.
 - **#02:** typed functions, debugging literal types, and combining generics with typed functions.
 - **#03:** constraints and FKs, finding unmatched records, debugging, views with `DISTINCT`, and cascading deletes.
+- **#04:** auth (bcrypt/login/JWT) went 0/3, plus `NULL`/optional handling, missed status codes, and `ON DELETE` behaviour. Most answers were almost right but missed a single stated requirement — the same pattern as #01.
 
 ## Structure
 
@@ -52,7 +59,7 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 
 ```
 labs/
-├── Technical Learning & Assessments/  # Graded self-assessments
+├── Technical Learning & Assessments/  # Graded self-assessments (#04 lives in fastapi/expense_tracker/)
 │   ├── Assessment #01/            # Mixed topics: Questions.md, answer files, Answers.md report
 │   ├── Assessment #02/            # TypeScript
 │   └── Assessment #03/            # PostgreSQL company projects database
@@ -64,12 +71,20 @@ labs/
 │   │   ├── models.py              # SQLAlchemy models
 │   │   ├── schema.py              # Pydantic schemas and response wrappers
 │   │   └── project_one/           # First version: in-memory CRUD books API
-│   └── todo/                      # Todo API with users, bcrypt, and JWT login
-│       ├── main.py                # App setup, includes the routers
-│       ├── database.py            # Engine, session, DB_DEPENDENCY
-│       ├── models/                # SQLAlchemy User and Todo
-│       ├── schemas/               # Pydantic request/response models
-│       └── routers/               # auth.py (/auth), todo.py (/todos)
+│   ├── todo/                      # Todo API with users, bcrypt, and JWT login
+│   │   ├── main.py                # App setup, includes the routers
+│   │   ├── database.py            # Engine, session, DB_DEPENDENCY
+│   │   ├── models/                # SQLAlchemy User and Todo
+│   │   ├── schemas/               # Pydantic request/response models
+│   │   └── routers/               # auth.py (/auth), todo.py (/todos)
+│   └── expense_tracker/           # Expense tracker API (Assessment #04)
+│       ├── README.md             # Assessment #04 brief (questions)
+│       ├── Answers.md             # Assessment #04 evaluation report (4/12)
+│       ├── schema.sql             # PostgreSQL tables + seed data
+│       ├── main.py, database.py   # App setup and session/DB_DEPENDENCY
+│       ├── models/                # SQLAlchemy User, Category, Expense
+│       ├── schemas/               # auth, categories, expenses Pydantic models
+│       └── routers/               # auth.py, categories.py, expenses.py
 ├── js/                            # JavaScript practice problems
 │   ├── codeWars.js                # Codewars katas
 │   └── pracHub.js                 # Algorithm practice (two-sum, etc.)
@@ -154,6 +169,11 @@ cd fastapi/books/project_one && uvicorn books:app --reload
 # Todo API (also needs bcrypt, python-jose[cryptography], and a local "todo" database)
 createdb -U postgres todo
 cd fastapi/todo && uvicorn main:app --reload
+
+# Expense tracker API (needs bcrypt, python-jose[cryptography]; tables come from schema.sql, not create_all)
+createdb -U postgres expenses
+psql -U postgres -d expenses -f fastapi/expense_tracker/schema.sql
+cd fastapi/expense_tracker && uvicorn main:app --reload
 
 # Rust
 cd rust/<project> && cargo run
