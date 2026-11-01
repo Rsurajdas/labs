@@ -1,6 +1,16 @@
 // Question 4 — see ASSESSMENT.md for the full requirements.
-// TODO: replace this stub with your answer.
+import { type ElementType, type ReactNode } from "react";
 
-export function Container() {
-  return null;
+type ContainerProps = {
+  as?: ElementType;
+  className?: string;
+  children: ReactNode;
+};
+
+export function Container({
+  as: Component = "div",
+  className,
+  children,
+}: ContainerProps) {
+  return <Component className={className}>{children}</Component>;
 }
