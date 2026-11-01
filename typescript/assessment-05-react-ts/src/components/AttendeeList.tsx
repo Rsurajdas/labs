@@ -21,6 +21,9 @@ export function AttendeeList({
     <ul>
       {attendees.map((attendee) => (
         <li key={attendee.id}>
+          <span>
+            {attendee.name} - {attendee.email}
+          </span>
           <TicketDetails ticket="standard" />
           <Button
             variant="primary"
