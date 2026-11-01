@@ -1,6 +1,17 @@
 // Question 3 — see ASSESSMENT.md for the full requirements.
-// TODO: replace this stub with your answer.
+import { type ComponentPropsWithoutRef } from "react";
 
-export function Button() {
-  return null;
+type ButtonProps = {
+  variant?: "primary" | "danger";
+} & ComponentPropsWithoutRef<"button">;
+
+export function Button({ variant = "primary", ...props }: ButtonProps) {
+  return (
+    <button
+      type={props.type ?? "button"}
+      className={`btn ${variant === "primary" ? "btn-primary" : "btn-danger"} ${props.className ?? ""}`}
+    >
+      {props.children}
+    </button>
+  );
 }
