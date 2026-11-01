@@ -7,7 +7,7 @@ type TextFieldProps = ComponentPropsWithoutRef<"input"> & {
   error?: string;
 };
 
-const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function (
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function (
   { label, id, error, ...props },
   ref,
 ) {
@@ -23,5 +23,3 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function (
     </div>
   );
 });
-
-export default TextField;
