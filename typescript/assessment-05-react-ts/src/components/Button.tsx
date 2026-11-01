@@ -10,6 +10,7 @@ export function Button({ variant = "primary", ...props }: ButtonProps) {
     <button
       type={props.type ?? "button"}
       className={`btn ${variant === "primary" ? "btn-primary" : "btn-danger"} ${props.className ?? ""}`}
+      onClick={props.onClick}
     >
       {props.children}
     </button>
