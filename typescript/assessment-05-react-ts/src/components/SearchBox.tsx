@@ -5,20 +5,25 @@ type SearchBoxProps = {
   onSearch: (term: string) => void;
 };
 
-export function SearchBox(onSearch: SearchBoxProps) {
-  const [term, setTerm] = useState();
+export function SearchBox({ onSearch }: SearchBoxProps) {
+  const [term, setTerm] = useState("");
 
-  function handleChange(event: React.FormEvent<HTMLInputElement>) {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setTerm(event.target.value);
   }
 
-  function handleSubmit(event: React.ChangeEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
     onSearch(term.trim());
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <input value={term} onChange={handleChange} placeholder="Search attendees" />
+      <input
+        value={term}
+        onChange={handleChange}
+        placeholder="Search attendees"
+      />
       <button>Search</button>
     </form>
   );

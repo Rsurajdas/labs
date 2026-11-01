@@ -19,8 +19,10 @@
 
 ## Question 7 — SearchBox bugs
 
-1.
-2.
+1. `useState` is initialized with an empty value and no explicit type.
+2. The `handleChange` function uses the wrong event type. It should use `ChangeEvent` because it's assigned to an input's `onChange` handler.
+3. The `handleSubmit` function uses the wrong event type. It should use `FormEvent<HTMLFormElement>` because it's assigned to a form's `onSubmit` handler. Also, `event.preventDefault()` is missing, which prevents the page from reloading on submission.
+4. onSearch should be destructured directly from the props.
 
 (Put the fixed code in src/components/SearchBox.tsx.)
 
