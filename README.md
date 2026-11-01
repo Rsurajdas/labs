@@ -20,10 +20,11 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Todos:** full CRUD on `/todos`, with `Field` validation (priority 1–5, length limits), `Path(gt=0)`, 404s, and a `204` on delete. Todos have an `owner_id` foreign key to `users`, but the routes don't depend on `decode_jwt` yet and nothing fills in `owner_id`.
 - **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; Assessment #04 lives inside the project it covers, `fastapi/expense_tracker/`.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
-- **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) about wrapper components.
-  - `Inputs` extends `ComponentPropsWithoutRef<"input">` and forwards the remaining props with `...props`.
+- **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) about wrapper components and forwarded refs.
+  - `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`.
   - `Button` is a discriminated union on `tag` (`"button"` or `"anchor"`), so it renders either a `<button>` or an `<a>`.
   - `PolymorphicComponent` takes an `el: ElementType` prop and renders whatever element it's given.
+  - `Form` wraps a `<form>` (extending `ComponentPropsWithoutRef<"form">`), handles `onSubmit` by collecting `FormData` into an object and passing it to an `onSave` callback, and exposes an imperative `clear()` method to the parent via `forwardRef` + `useImperativeHandle` (typed by the `FormHandleRef` interface).
 
 ## Recently covered
 
@@ -116,8 +117,8 @@ labs/
 │   │       ├── App.tsx            # Goal state, add/delete handlers
 │   │       ├── components/        # Header, CourseGoal, CourseGoalList, AddNewGoal, InfoBox
 │   │       └── types/goal.ts      # Goal interface and handler types
-│   └── react-ts-advance/          # React + TypeScript (Vite): wrapper and polymorphic components
-│       └── src/components/        # Inputs, Button, PolymorphicComponent
+│   └── react-ts-advance/          # React + TypeScript (Vite): wrapper, polymorphic, and ref-forwarding components
+│       └── src/components/        # Inputs, Button, PolymorphicComponent, Form
 └── package.json                   # Node tooling (TypeScript compiler)
 ```
 
