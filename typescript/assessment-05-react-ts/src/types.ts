@@ -1,4 +1,19 @@
 // Question 1 — see ASSESSMENT.md for the full requirements.
-// TODO: replace this stub with your answer.
+type TicketType = "standard" | "student" | "vip";
 
-export {};
+type AttendeeFormValues = {
+  name: string;
+  email: string;
+  ticket: TicketType;
+};
+
+type Attendee = AttendeeFormValues & {
+  id: number;
+  checkedIn: boolean;
+};
+
+interface FormHandleRef {
+  clear: () => void;
+}
+
+export type { TicketType, AttendeeFormValues, Attendee, FormHandleRef };
