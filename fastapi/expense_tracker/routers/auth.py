@@ -60,15 +60,17 @@ def verify_hashed_password(plain_password: str, hashed_password: str):
 
 
 def authenticate_user(username: str, password: str, db):
-    user = db.query(User).filter(User.username == username).first()
-    if user is None:
-        return None
-    if not verify_hashed_password(password, user.hashed_password):
+    user = (
+        db.query(User).filter(User.username == username, User.is_active == True).first()
+    )
+    if user is None or not verify_hashed_password(password, user.hashed_password):
         return None
     return user
 
 
-def create_access_token(username: str, user_id: int, expires_delta: timedelta):
+def create_access_token(
+    username: str, user_id: int, expires_delta: timedelta = timedelta(minutes=30)
+):
     encode = {"sub": username, "id": user_id}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
@@ -85,7 +87,7 @@ def decode_jwt(token: Annotated[str, Depends(oauth2_scheme)]):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
             )
-        return {"username": username, "user_id": user_id}
+        return {"username": username, "id": user_id}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -109,8 +111,10 @@ async def get_user_by_id(db: DB_DEPENDENCY, id: int = Path(gt=0)):
     return user
 
 
-@router.post("/register", response_model=UserResponse)
-def register(user: UserCreate, db: DB_DEPENDENCY):
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
+async def register(user: UserCreate, db: DB_DEPENDENCY):
     hashed = create_hashed_password(user.password)
     new_user = User(
         email=user.email,
@@ -130,7 +134,7 @@ def register(user: UserCreate, db: DB_DEPENDENCY):
 
 
 @router.post("/sign_in", response_model=Token)
-def sign_in(
+async def sign_in(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
 ):
     user = authenticate_user(form_data.username, form_data.password, db)
