@@ -1,6 +1,45 @@
 // Question 9 — see ASSESSMENT.md for the full requirements.
-// TODO: replace this stub with your answer.
+import {
+  type ComponentPropsWithoutRef,
+  forwardRef,
+  type SubmitEvent,
+  useRef,
+  useImperativeHandle,
+} from "react";
+import { type AttendeeFormValues, type FormHandleRef } from "../types";
+import { TextField } from "./TextField";
 
-export function RegistrationForm() {
-  return null;
-}
+type RegistrationFormProps = ComponentPropsWithoutRef<"form"> & {
+  onSave: (value: AttendeeFormValues) => void;
+};
+
+export const RegistrationForm = forwardRef<
+  FormHandleRef,
+  RegistrationFormProps
+>(function ({ onSave, children, ...props }: RegistrationFormProps, ref) {
+  const formRef = useRef<HTMLFormElement>(null);
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      formRef.current?.reset();
+    },
+  }));
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries()) as AttendeeFormValues;
+    onSave(data);
+  }
+
+  return (
+    <form {...props} ref={formRef} onSubmit={handleSubmit}>
+      <TextField label="Name" name="name" id="name" />
+      <TextField label="Email" name="email" id="email" />
+      <select name="ticket">
+        <option value="standard">standard</option>
+        <option value="student">student</option>
+        <option value="vip">vip</option>
+      </select>
+      {children}
+    </form>
+  );
+});
