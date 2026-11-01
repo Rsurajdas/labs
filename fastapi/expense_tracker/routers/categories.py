@@ -38,7 +38,7 @@ async def get_category_by_id(
     category = find_category(db, category_id)
     if category is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
     return category
 
@@ -50,7 +50,7 @@ async def delete_category_by_id(
     category = find_category(db, category_id)
     if category is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found!"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
         )
     db.delete(category)
     db.commit()
