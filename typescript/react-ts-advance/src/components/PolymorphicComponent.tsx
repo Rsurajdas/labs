@@ -1,13 +1,15 @@
-import type { ElementType, ReactNode } from "react";
+import type { ElementType, ReactNode, ComponentPropsWithoutRef } from "react";
 
-interface PolymorphicProps {
-  el: ElementType;
-  children?: ReactNode;
-}
+type PolymorphicProps<T extends ElementType> = {
+  el?: T;
+  children: ReactNode;
+} & ComponentPropsWithoutRef<T>;
 
-export default function PolymorphicComponent({
-  el: Component, // alias name
+export default function PolymorphicComponent<T extends ElementType>({
+  el,
   children,
-}: PolymorphicProps) {
-  return <Component>{children}</Component>;
+  ...props
+}: PolymorphicProps<T>) {
+  const Component = el || "div";
+  return <Component {...props}>{children}</Component>;
 }

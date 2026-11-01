@@ -11,7 +11,6 @@ function App() {
 
         <Button text="Submit" tag="button" />
       </PolymorphicComponent>
-      <PolymorphicComponent el="input" />
     </main>
   );
 }
