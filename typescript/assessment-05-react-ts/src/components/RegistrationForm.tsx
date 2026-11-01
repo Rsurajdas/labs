@@ -16,18 +16,22 @@ type RegistrationFormProps = ComponentPropsWithoutRef<"form"> & {
 export const RegistrationForm = forwardRef<
   FormHandleRef,
   RegistrationFormProps
->(function ({ onSave, children, ...props }: RegistrationFormProps, ref) {
+>(function ({ onSave, children, ...props }, ref) {
   const formRef = useRef<HTMLFormElement>(null);
+
   useImperativeHandle(ref, () => ({
     clear: () => {
       formRef.current?.reset();
     },
   }));
+
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries()) as AttendeeFormValues;
-    onSave(data);
+    if (data.name.trim() !== "" || data.email.trim() !== "") {
+      onSave(data);
+    }
   }
 
   return (
