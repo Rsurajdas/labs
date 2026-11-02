@@ -14,12 +14,13 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function (
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
-      <input id={id} {...props} ref={ref} />
-      {error ? (
-        <p role="alert" aria-invalid={true}>
-          {error}
-        </p>
-      ) : null}
+      <input
+        id={id}
+        ref={ref}
+        aria-invalid={error ? true : undefined}
+        {...props}
+      />
+      {error ? <p role="alert">{error}</p> : null}
     </div>
   );
 });
