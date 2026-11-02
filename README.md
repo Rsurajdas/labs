@@ -8,6 +8,7 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **React + TypeScript assessment app:** `typescript/assessment-05-react-ts/` is a "Workshop Registration Desk" Vite app built over the 12 questions of [Assessment #05](#assessments), each later component building on the earlier ones. It covers shared types in `types.ts`, a `Card` with `PropsWithChildren`, a `Button` wrapper over `ComponentPropsWithoutRef<"button">` with spread-order-sensitive `className` merging, a polymorphic `Container` (`as?: ElementType`), a discriminated-union `TicketDetails`, a deliberately broken `SearchBox` to debug (Q7), a `TextField` with `forwardRef`, a `RegistrationForm` exposing an imperative `clear()` via `useImperativeHandle`, an `AttendeeList`, and `App` owning all state (lifted state, case-insensitive duplicate check, immutable updates, and the form ref). The code here is the submission plus the fixes applied after grading.
 - **FastAPI expense tracker:** `fastapi/assessment-04-expense-tracker/` is a standalone app (`users`, `categories`, `expenses` on PostgreSQL), laid out like the todo API with `models/`, `schemas/`, and `routers/` packages. The tables are created by `schema.sql`, not `Base.metadata.create_all()`, and the expense/category routes aren't JWT-protected (`user_id` is passed in the body or query).
   - **Auth (`/auth`):** `POST /register` hashes passwords with `bcrypt`, `POST /sign_in` takes an `OAuth2PasswordRequestForm` and returns a 30-minute HS256 JWT (`sub`, `id`, `exp`). `authenticate_user` only matches by username and returns `401` on bad credentials; `find_user` filters on `is_active`.
   - **Categories (`/categories`):** full CRUD ordered by name, `Path(gt=0)`, and 404s.
@@ -18,7 +19,7 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Two ways to log in:** `POST /auth/login` takes a custom Pydantic body (email + password), and `POST /auth/sign_in` takes an `OAuth2PasswordRequestForm` (username + password). Both go through `authenticate_user`, which only matches active users and returns `401` on bad credentials.
   - **JWTs:** a successful login returns a 30-minute HS256 token from `python-jose` (`sub`, `id`, `exp`). `decode_jwt` validates it through `OAuth2PasswordBearer`.
   - **Todos:** full CRUD on `/todos`, with `Field` validation (priority 1–5, length limits), `Path(gt=0)`, 404s, and a `204` on delete. Todos have an `owner_id` foreign key to `users`, but the routes don't depend on `decode_jwt` yet and nothing fills in `owner_id`.
-- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; Assessment #04 lives inside the project it covers, `fastapi/assessment-04-expense-tracker/`.
+- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; the project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
 - **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) about wrapper components and forwarded refs.
   - `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`.
@@ -46,6 +47,7 @@ Each set is answered without running the code first, then graded. The scores are
 | 02 | 2026-10-17 | TypeScript: aliases, interfaces, unions, generics     | 9 / 12 (75%) |
 | 03 | 2026-10-20 | PostgreSQL: company projects database                 | 7 / 12 (58%) |
 | 04 | 2026-10-31 | FastAPI: expense tracker (SQLAlchemy, Pydantic, auth) | 4 / 12 (33%) |
+| 05 | 2026-11-01 | React + TypeScript: workshop registration app         | 3 / 12 (25%) |
 
 Where points were lost:
 
@@ -53,6 +55,7 @@ Where points were lost:
 - **#02:** typed functions, debugging literal types, and combining generics with typed functions.
 - **#03:** constraints and FKs, finding unmatched records, debugging, views with `DISTINCT`, and cascading deletes.
 - **#04:** auth (bcrypt/login/JWT) went 0/3, plus `NULL`/optional handling, missed status codes, and `ON DELETE` behaviour. Most answers were almost right but missed a single stated requirement — the same pattern as #01.
+- **#05:** first dedicated React assessment. The architecture was right almost everywhere; the marks went on spread/prop order, how `&&` renders a falsy `0`, which element an attribute belongs on, validating `FormData` values, and React 18 event types (`SubmitEvent` doesn't exist). 7 of the 8 wrong answers had the right structure but missed a stated detail — the same requirement-completeness pattern as #01 and #04.
 
 ## Structure
 
@@ -60,7 +63,7 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 
 ```
 labs/
-├── Technical Learning & Assessments/  # Graded self-assessments (#04 lives in fastapi/assessment-04-expense-tracker/)
+├── Technical Learning & Assessments/  # Graded self-assessments (#04 and #05 live inside the projects they cover)
 │   ├── Assessment #01/            # Mixed topics: Questions.md, answer files, Answers.md report
 │   ├── Assessment #02/            # TypeScript
 │   └── Assessment #03/            # PostgreSQL company projects database
@@ -117,8 +120,16 @@ labs/
 │   │       ├── App.tsx            # Goal state, add/delete handlers
 │   │       ├── components/        # Header, CourseGoal, CourseGoalList, AddNewGoal, InfoBox
 │   │       └── types/goal.ts      # Goal interface and handler types
-│   └── react-ts-advance/          # React + TypeScript (Vite): wrapper, polymorphic, and ref-forwarding components
-│       └── src/components/        # Inputs, Button, PolymorphicComponent, Form
+│   ├── react-ts-advance/          # React + TypeScript (Vite): wrapper, polymorphic, and ref-forwarding components
+│   │   └── src/components/        # Inputs, Button, PolymorphicComponent, Form
+│   └── assessment-05-react-ts/    # Workshop Registration Desk app (Assessment #05)
+│       ├── ASSESSMENT.md          # Assessment #05 brief (12 questions)
+│       ├── ANSWERS.md             # Written answers (Q6, Q7, Q12)
+│       ├── RESULT.md              # Assessment #05 evaluation report (3/12)
+│       └── src/
+│           ├── App.tsx            # Lifted state, duplicate check, form ref
+│           ├── components/        # Card, Button, Container, TicketDetails, Summary, SearchBox, TextField, RegistrationForm, AttendeeList
+│           └── types.ts           # TicketType, AttendeeFormValues, Attendee, FormHandleRef
 └── package.json                   # Node tooling (TypeScript compiler)
 ```
 
@@ -130,7 +141,7 @@ labs/
 | [`python/`](./python)                                                             | Python data structures, imports, and object-oriented programming                          |
 | [`rust/`](./rust)                                                                 | Rust fundamentals: variables, mutability, and data types                                  |
 | [`sql/`](./sql)                                                                   | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs, many-to-many |
-| [`typescript/`](./typescript)                                                     | TypeScript types, interfaces, unions, generics, and two React + TS apps                   |
+| [`typescript/`](./typescript)                                                     | TypeScript types, interfaces, unions, generics, and three React + TS apps                 |
 
 ## Conventions
 
@@ -157,6 +168,7 @@ npx tsc typescript/basic.ts
 # React + TypeScript (Vite)
 cd typescript/rect-ts-basics && npm install && npm run dev
 cd typescript/react-ts-advance && npm install && npm run dev
+cd typescript/assessment-05-react-ts && npm install && npm run dev  # npm run typecheck for tsc --noEmit
 
 # Python
 cd python && python <file>.py
