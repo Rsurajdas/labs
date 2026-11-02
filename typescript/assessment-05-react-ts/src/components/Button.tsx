@@ -14,9 +14,5 @@ export function Button({
   const classes = className
     ? `btn btn-${variant} ${className}`
     : `btn btn-${variant}`;
-  return (
-    <button type={type} className={classes} {...props}>
-      {props.children}
-    </button>
-  );
+  return <button type={type} className={classes} {...props} />;
 }
