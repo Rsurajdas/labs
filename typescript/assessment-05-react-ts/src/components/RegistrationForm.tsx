@@ -6,7 +6,11 @@ import {
   useRef,
   useImperativeHandle,
 } from "react";
-import { type AttendeeFormValues, type FormHandleRef } from "../types";
+import {
+  type AttendeeFormValues,
+  type FormHandleRef,
+  type TicketType,
+} from "../types";
 import { TextField } from "./TextField";
 
 type RegistrationFormProps = ComponentPropsWithoutRef<"form"> & {
@@ -27,17 +31,19 @@ export const RegistrationForm = forwardRef<
 
   function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries()) as AttendeeFormValues;
-    if (data.name.trim() !== "" || data.email.trim() !== "") {
-      onSave(data);
-    }
+    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const values: AttendeeFormValues = {
+      name: String(data.name ?? "").trim(),
+      email: String(data.email ?? "").trim(),
+      ticket: data.ticket as TicketType,
+    };
+    if (values.name && values.email) onSave(values);
   }
 
   return (
     <form {...props} ref={formRef} onSubmit={handleSubmit}>
       <TextField label="Name" name="name" id="name" />
-      <TextField label="Email" name="email" id="email" />
+      <TextField label="Email" name="email" id="email" type="email" />
       <select name="ticket">
         <option value="standard">standard</option>
         <option value="student">student</option>
