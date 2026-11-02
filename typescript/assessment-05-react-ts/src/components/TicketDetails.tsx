@@ -32,3 +32,7 @@ export function TicketDetails(props: TicketDetailsProps) {
     </span>
   );
 }
+
+// <TicketDetails ticket="student" />
+// Does NOT compile: ticket="student" selects the student member of the union,
+// which requires studentId.
