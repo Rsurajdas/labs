@@ -29,7 +29,7 @@ export function AttendeeList({
             variant="primary"
             onClick={() => onToggleCheckIn(attendee.id)}
           >
-            Check in
+            {attendee.checkedIn ? "Undo" : "Check in"}
           </Button>
           <Button variant="danger" onClick={() => onRemove(attendee.id)}>
             Remove
