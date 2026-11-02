@@ -14,7 +14,8 @@ export function SearchBox({ onSearch }: SearchBoxProps) {
 
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    onSearch(term.trim());
+    const trimmed = term.trim();
+    if (trimmed) onSearch(trimmed);
   }
 
   return (
