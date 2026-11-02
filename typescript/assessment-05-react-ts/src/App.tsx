@@ -13,14 +13,24 @@ export default function App() {
   const formRef = useRef<FormHandleRef>(null);
 
   function handleSave(values: AttendeeFormValues) {
-    if (attendees.some((attendee) => attendee.email === values.email)) {
+    const email = values.email.toLowerCase();
+    if (attendees.some((a) => a.email.toLowerCase() === email)) {
       setErrorMessage("Email already registered");
       return;
     }
-    setAttendees((prev) => [
-      ...prev,
-      { ...values, checkedIn: false, id: prev.length + 1 },
-    ]);
+
+    setAttendees((prev) => {
+      const nextId = prev.reduce((max, a) => Math.max(max, a.id), 0) + 1;
+      return [
+        ...prev,
+        {
+          ...values,
+          id: nextId,
+          checkedIn: false,
+        },
+      ];
+    });
+
     setErrorMessage(null);
     formRef.current?.clear();
   }
@@ -42,7 +52,7 @@ export default function App() {
   return (
     <>
       <Container as="main">
-        <Card title="Registration">
+        <Card title="Register">
           <RegistrationForm ref={formRef} onSave={handleSave}>
             <Button type="submit">Add attendee</Button>
           </RegistrationForm>
@@ -50,7 +60,7 @@ export default function App() {
         </Card>
         <Card
           title="Attendees"
-          footer={`"${attendees.filter((a) => a.checkedIn).length} of ${attendees.length} checked in"`}
+          footer={`${attendees.filter((a) => a.checkedIn).length} of ${attendees.length} checked in`}
         >
           <AttendeeList
             attendees={attendees}
