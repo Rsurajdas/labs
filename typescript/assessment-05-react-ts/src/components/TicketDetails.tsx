@@ -28,7 +28,7 @@ export function TicketDetails(props: TicketDetailsProps) {
         ? "Standard pass"
         : ticket === "student"
           ? `Student pass — ID: ${props.studentId}`
-          : `VIP — Seat: ${props.seat}${props.lounge ? ", (Lounge access)" : ""}`}
+          : `VIP — Seat ${props.seat}${props.lounge ? " (Lounge access)" : ""}`}
     </span>
   );
 }
