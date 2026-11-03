@@ -1,10 +1,13 @@
 import PolymorphicComponent from "./UI/PolymorphicComponent";
 
-export default function Timer() {
+import { type Timer as TimerProps } from "../store/timers-context";
+
+export default function Timer({ name, duration }: TimerProps) {
   return (
     <>
       <PolymorphicComponent el="article">
-        <h2>TODO: TIMER NAME</h2>
+        <h2>{name}</h2>
+        <p>{duration}</p>
       </PolymorphicComponent>
     </>
   );
