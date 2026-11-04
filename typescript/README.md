@@ -1,14 +1,15 @@
 # TypeScript
 
-TypeScript fundamentals in one scratch file, then the same ideas applied to props, state, and events in a small React app.
+TypeScript fundamentals in one scratch file, then the same ideas applied to props, state, and events in a small React app, and finally the advanced patterns (context + reducer, generics, polymorphic components, imperative refs) in a second React app.
 
 ## What's here
 
-| Path              | Covers                                                                                         |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| `basic.ts`        | Type aliases, union types, function types, interfaces, interface merging, literal unions, generics |
-| `basic.js`        | Compiled output of `basic.ts` (an older version of it, see the notes)                          |
-| `rect-ts-basics/` | React + TypeScript (Vite) course-goals app: add and delete goals with typed props and handlers |
+| Path                | Covers                                                                                         |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| `basic.ts`          | Type aliases, union types, function types, interfaces, interface merging, literal unions, generics |
+| `basic.js`          | Compiled output of `basic.ts` (an older version of it, see the notes)                          |
+| `rect-ts-basics/`   | React + TypeScript (Vite) course-goals app: add and delete goals with typed props and handlers |
+| `react-ts-advance/` | React + TypeScript (Vite) timer app: typed context + reducer, polymorphic and discriminated-union components, imperative handles |
 
 ### Fundamentals (basic.ts)
 
@@ -45,6 +46,37 @@ The TypeScript patterns it practises:
 - Shared types in `types/goal.ts`, imported with `import { type Goal }` so they're erased at build time
 - State lifted into `App`, with child components calling handlers to change it
 
+### Advanced React + TypeScript (react-ts-advance/)
+
+A timer app: add named timers with a duration, then start/stop them all from the header. Each timer counts down with a progress bar. State lives in a context backed by a reducer, so any component can read timers or dispatch actions without prop drilling.
+
+```text
+src/
+├── App.tsx                           # wraps the tree in <TimersContextProvider>
+├── components/
+│   ├── Header.tsx                    # one Start/Stop button that toggles isRunning
+│   ├── AddTimer.tsx                  # Form ref (FormHandleRef) to clear after save
+│   ├── Timers.tsx                    # reads timers from context, maps to <Timer>
+│   ├── Timer.tsx                     # setInterval countdown, formatted remaining time
+│   └── UI/
+│       ├── Button.tsx                # button-or-anchor via a discriminated union + type guard
+│       ├── Form.tsx                  # forwardRef + useImperativeHandle, FormData on submit
+│       ├── Inputs.tsx                # forwardRef input wrapper, interface extends ComponentPropsWithoutRef<"input">
+│       └── PolymorphicComponent.tsx  # generic `el` prop (ElementType) with the matching DOM props
+└── store/
+    └── timers-context.tsx            # createContext + useReducer, typed actions, useTimersContext hook
+```
+
+The TypeScript patterns it practises:
+
+- **Typed context + reducer:** `TimersContextValue` merges state with action creators; `createContext<TimersContextValue | null>(null)`, and a `useTimersContext` hook that throws if used outside the provider so the value is non-null for consumers
+- **Discriminated-union actions:** `Action = StartTimersAction | StopTimersAction | AddTimerAction`, narrowed on `action.type` inside the reducer
+- **Discriminated-union props:** `Button` accepts `ButtonProps | AnchorProps` (with `href?: never` on the button side) and narrows with an `isAnchorProps` type guard
+- **Polymorphic component:** `PolymorphicComponent<T extends ElementType>` takes an `el` prop and spreads `ComponentPropsWithoutRef<T>`, so the allowed props follow the element
+- **Imperative handles:** `Form` uses `forwardRef` + `useImperativeHandle` to expose a `FormHandleRef` with `clear()`; `AddTimer` holds `useRef<FormHandleRef>` and calls `form.current?.clear()` after saving
+- **Extending element props:** input/form prop types `extends ComponentPropsWithoutRef<...>` to accept all native attributes plus the custom ones
+- **`FormData` on submit:** `Object.fromEntries(new FormData(e.currentTarget).entries())`, passed up as `unknown` and asserted at the call site
+
 ## Running
 
 The TypeScript compiler is installed at the repo root.
@@ -55,8 +87,8 @@ npm install
 npx tsc typescript/basic.ts      # writes typescript/basic.js next to it
 node typescript/basic.js         # prints 12
 
-# React app
-cd typescript/rect-ts-basics
+# React apps (same scripts in each)
+cd typescript/rect-ts-basics     # or typescript/react-ts-advance
 npm install
 npm run dev                      # Vite dev server
 npm run build                    # tsc -b, then vite build
@@ -71,3 +103,6 @@ npm run lint
 - The `!` in `titleEl.current!.value` tells TypeScript the ref is never `null` at that point. True here because the form only submits once it's rendered, but it's an assertion, not a check.
 - The form submits empty strings happily. There's no validation on title or description yet.
 - `rect-ts-basics/README.md` is still the Vite template README.
+- In `react-ts-advance`, `Timers` uses `key={idx}`. It works while timers are only appended, but it's the array index, not a stable id, so it would misbehave if timers could be removed or reordered.
+- Each `Timer` keeps its own `remainingTime` state and counts down on an interval; there's no reset, so once a timer hits 0 it stays there even after Stop/Start.
+- `react-ts-advance/README.md` is still the Vite template README.
