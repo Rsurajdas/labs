@@ -21,11 +21,10 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Todos:** full CRUD on `/todos`, with `Field` validation (priority 1–5, length limits), `Path(gt=0)`, 404s, and a `204` on delete. Todos have an `owner_id` foreign key to `users`, but the routes don't depend on `decode_jwt` yet and nothing fills in `owner_id`.
 - **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; the project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
-- **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) about wrapper components and forwarded refs.
-  - `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`.
-  - `Button` is a discriminated union on `tag` (`"button"` or `"anchor"`), so it renders either a `<button>` or an `<a>`.
-  - `PolymorphicComponent` takes an `el: ElementType` prop and renders whatever element it's given.
-  - `Form` wraps a `<form>` (extending `ComponentPropsWithoutRef<"form">`), handles `onSubmit` by collecting `FormData` into an object and passing it to an `onSave` callback, and exposes an imperative `clear()` method to the parent via `forwardRef` + `useImperativeHandle` (typed by the `FormHandleRef` interface).
+- **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) that started as a set of wrapper/forwarded-ref components (now under `src/components/UI/`) and grew into a "ReactTimer" app reusing them, with a Context + `useReducer` store.
+  - **Reusable UI (`components/UI/`):** `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`. `Button` is a discriminated union on `tag` (`"button"` or `"anchor"`), so it renders either a `<button>` or an `<a>`. `PolymorphicComponent` takes an `el: ElementType` prop and renders whatever element it's given. `Form` wraps a `<form>` (extending `ComponentPropsWithoutRef<"form">`), handles `onSubmit` by collecting `FormData` into an object and passing it to an `onSave` callback, and exposes an imperative `clear()` method to the parent via `forwardRef` + `useImperativeHandle` (typed by the `FormHandleRef` interface).
+  - **Timer store (`store/timers-context.tsx`):** a `createContext` provider backed by `useReducer`, with a discriminated-union `Action` type (`ADD_TIMER`, `START_TIMERS`, `STOP_TIMERS`) and immutable reducer updates. The context value bundles state (`timers`, `isRunning`) with `addTimer`/`startTimers`/`stopTimers` dispatchers, and a typed `useTimersContext` hook throws if the context is `null` so consumers get a non-null value.
+  - **Timer app:** `App` wraps everything in the provider; `AddTimer` reuses `Form` + `Input` + `Button` (and the form ref) to add a timer; `Header` flips one `Button` between Start/Stop from `isRunning`; `Timers` maps the list and `Timer` renders each one through `PolymorphicComponent` as an `<article>`.
 
 ## Recently covered
 
@@ -120,8 +119,11 @@ labs/
 │   │       ├── App.tsx            # Goal state, add/delete handlers
 │   │       ├── components/        # Header, CourseGoal, CourseGoalList, AddNewGoal, InfoBox
 │   │       └── types/goal.ts      # Goal interface and handler types
-│   ├── react-ts-advance/          # React + TypeScript (Vite): wrapper, polymorphic, and ref-forwarding components
-│   │   └── src/components/        # Inputs, Button, PolymorphicComponent, Form
+│   ├── react-ts-advance/          # React + TypeScript (Vite): wrapper/polymorphic/ref components + a ReactTimer app
+│   │   └── src/
+│   │       ├── App.tsx            # Wraps the app in TimersContextProvider
+│   │       ├── components/        # Header, AddTimer, Timers, Timer + UI/ (Inputs, Button, PolymorphicComponent, Form)
+│   │       └── store/             # timers-context.tsx: createContext + useReducer store
 │   └── assessment-05-react-ts/    # Workshop Registration Desk app (Assessment #05)
 │       ├── ASSESSMENT.md          # Assessment #05 brief (12 questions)
 │       ├── ANSWERS.md             # Written answers (Q6, Q7, Q12)
