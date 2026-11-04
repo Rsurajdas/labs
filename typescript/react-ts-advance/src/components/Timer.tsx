@@ -1,24 +1,36 @@
 import PolymorphicComponent from "./UI/PolymorphicComponent";
 
-import { type Timer as TimerProps } from "../store/timers-context";
-import { useEffect, useState } from "react";
+import {
+  useTimersContext,
+  type Timer as TimerProps,
+} from "../store/timers-context";
+import { useEffect, useRef, useState } from "react";
 
 export default function Timer({ name, duration }: TimerProps) {
   const [remainingTime, setRemainingTime] = useState(duration * 1000);
+  const { isRunning } = useTimersContext();
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setRemainingTime((prevState) => {
-        if (prevState <= 0) {
-          clearInterval(timer);
-          return prevState;
-        }
-        return prevState - 50;
-      });
-    }, 50);
+    let timer: number;
+    if (isRunning) {
+      timer = setInterval(() => {
+        setRemainingTime((prevState) => {
+          if (prevState <= 0) {
+            clearInterval(timer);
+            return prevState;
+          }
+          return prevState - 50;
+        });
+        timerRef.current = timer;
+      }, 50);
+    }
+    if (!isRunning && timerRef.current) {
+      clearInterval(timerRef.current);
+    }
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isRunning]);
 
   const formatedRemainingTime = (remainingTime / 1000).toFixed(2);
   return (
