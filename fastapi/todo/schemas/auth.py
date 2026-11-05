@@ -36,7 +36,7 @@ class UserListResponse(BaseModel):
 class AuthResponse(BaseModel):
     status: str
     message: str
-    token: str
+    token: str | None = None
     model_config = ConfigDict(from_attributes=True)
 
 

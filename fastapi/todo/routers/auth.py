@@ -8,6 +8,7 @@ from schemas import auth as auth_schema
 from models import auth as auth_model
 import bcrypt
 from jose import JWTError, jwt
+from starlette import status
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -66,11 +67,12 @@ def decode_jwt(token: Annotated[str, Depends(oauth2_bearer)]):
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
         if username is None or user_id is None:
-            raise HTTPException(status_code=401, detail="Token is invalid")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token is invalid"
+            )
         return {"username": username, "id": user_id}
     except JWTError as e:
-        print(f"Token validation failed: {e}")
-        raise HTTPException(status_code=401, detail="Could not validate user")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=e)
 
 
 @router.get("/users", response_model=auth_schema.UserListResponse)
