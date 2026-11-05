@@ -54,8 +54,10 @@ def authenticate_user(
     return user
 
 
-def create_access_token(username: str, user_id: int, expires_delta: timedelta):
-    encode = {"sub": username, "id": user_id}
+def create_access_token(
+    username: str, user_id: int, role: str, expires_delta: timedelta
+):
+    encode = {"sub": username, "id": user_id, "role": role}
     expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORIHM)
@@ -66,11 +68,12 @@ def decode_jwt(token: Annotated[str, Depends(oauth2_bearer)]):
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORIHM)
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
-        if username is None or user_id is None:
+        user_role: str = payload.get("role")
+        if username is None or user_id is None or user_role is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Token is invalid"
             )
-        return {"username": username, "id": user_id}
+        return {"username": username, "id": user_id, "role": user_role}
     except JWTError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=e)
 
@@ -110,7 +113,9 @@ async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
-    token = create_access_token(user.username, user.id, timedelta(minutes=30))
+    token = create_access_token(
+        user.username, user.id, user.role, timedelta(minutes=30)
+    )
     return {
         "status": "success",
         "message": "User logged in successfully!",
@@ -127,5 +132,7 @@ async def sign_in(
         raise HTTPException(
             status_code=401, detail="Please provide valid email or password"
         )
-    token = create_access_token(user.username, user.id, timedelta(minutes=30))
+    token = create_access_token(
+        user.username, user.id, user.role, timedelta(minutes=30)
+    )
     return {"access_token": token, "token_type": "bearer"}
