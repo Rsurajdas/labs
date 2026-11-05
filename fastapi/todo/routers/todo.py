@@ -103,11 +103,11 @@ async def update_todo(
 async def delete_todo(
     user: USER_DEPENDENCY, db: DB_DEPENDENCY, id: Annotated[int, Path(gt=0)]
 ):
-    if user is None:
+    if user is None or user.get("role") != "admin":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Authetication failed"
         )
-    todo = db.query(Todo).filter(Todo.id == id, Todo.owner_id == user.get("id")).first()
+    todo = db.query(Todo).filter(Todo.id == id).first()
     if todo is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Todo not found"
