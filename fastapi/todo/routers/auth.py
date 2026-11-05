@@ -66,10 +66,11 @@ def decode_jwt(token: Annotated[str, Depends(oauth2_bearer)]):
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
         if username is None or user_id is None:
-            raise HTTPException(status_code=401, detail="Token is invalid!")
+            raise HTTPException(status_code=401, detail="Token is invalid")
         return {"username": username, "id": user_id}
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Token is invalid!")
+    except JWTError as e:
+        print(f"Token validation failed: {e}")
+        raise HTTPException(status_code=401, detail="Could not validate user")
 
 
 @router.get("/users", response_model=auth_schema.UserListResponse)
@@ -115,7 +116,7 @@ async def login(db: DB_DEPENDENCY, body: auth_schema.LoginRequest):
     }
 
 
-@router.post("/sign_in", response_model=auth_schema.AuthResponse)
+@router.post("/sign_in", response_model=auth_schema.Token)
 async def sign_in(
     formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
 ):
@@ -125,8 +126,4 @@ async def sign_in(
             status_code=401, detail="Please provide valid email or password"
         )
     token = create_access_token(user.username, user.id, timedelta(minutes=30))
-    return {
-        "status": "success",
-        "message": "User logged in successfully!",
-        "token": token,
-    }
+    return {"access_token": token, "token_type": "bearer"}

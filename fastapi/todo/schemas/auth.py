@@ -30,9 +30,17 @@ class UserListResponse(BaseModel):
     status: str
     length: int
     data: list[UserReponse]
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AuthResponse(BaseModel):
     status: str
     message: str
     token: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    model_config = ConfigDict(from_attributes=True)
