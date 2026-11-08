@@ -4,9 +4,26 @@ from starlette import status
 from database import DB_DEPENDENCY
 from models.user import User
 from schemas.auth import UserCreate, UserOut
-from security import hash_password
+from security import hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def authenticate_user(db: DB_DEPENDENCY, username: str, password: str):
+    user = (
+        db.query(User)
+        .filter(User.is_active == True)
+        .filter(User.username == username)
+        .first()
+    )
+
+    if user is None:
+        return None
+
+    if not verify_password(password, user.hashed_password):
+        None
+
+    return user
 
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
