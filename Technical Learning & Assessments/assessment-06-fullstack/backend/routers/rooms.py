@@ -2,6 +2,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from database import DB_DEPENDENCY
+from dependencies import AdminUser
 from models.room import Room
 from schemas.room import RoomCreate, RoomOut
 
@@ -17,13 +18,14 @@ def list_rooms(db: DB_DEPENDENCY):
 def get_room(room_id: int, db: DB_DEPENDENCY):
     room = db.query(Room).filter(Room.id == room_id).first()
     if room is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Room not found"
+        )
     return room
 
 
-# TODO Q4: admin only
 @router.post("", response_model=RoomOut, status_code=status.HTTP_201_CREATED)
-def create_room(body: RoomCreate, db: DB_DEPENDENCY):
+def create_room(body: RoomCreate, db: DB_DEPENDENCY, admin_user: AdminUser):
     if db.query(Room).filter(Room.name == body.name).first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Room name already exists"
@@ -35,11 +37,12 @@ def create_room(body: RoomCreate, db: DB_DEPENDENCY):
     return room
 
 
-# TODO Q4: admin only
 @router.delete("/{room_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_room(room_id: int, db: DB_DEPENDENCY):
+def delete_room(room_id: int, db: DB_DEPENDENCY, admin_user: AdminUser):
     room = db.query(Room).filter(Room.id == room_id).first()
     if room is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Room not found"
+        )
     db.delete(room)
     db.commit()
