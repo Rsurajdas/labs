@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -5,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from database import DB_DEPENDENCY
+from dependencies import CurrentUser
 from models.user import User
 from schemas.auth import Token, UserCreate, UserOut
 from security import create_access_token, hash_password, verify_password
@@ -75,22 +77,19 @@ async def sign_in(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
-            headers=["WWW-Authenticate", "Bearer"],
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     token = create_access_token(
         user.username,
         user.id,
         user.role,
-        expires_delta=settings.access_token_expire_minutes,
+        expires_delta=timedelta(minutes=settings.access_token_expire_minutes),
     )
 
     return {"access_token": token, "token_type": "bearer"}
 
 
-#
-# Q4 — authenticate_user(db, username, password)
-#      POST /auth/token
-#      GET  /auth/me
-#
-# See ASSESSMENT.md.
+@router.get("/me", response_model=UserOut)
+async def get_logged_in_user(user: CurrentUser):
+    return user
