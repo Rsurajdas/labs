@@ -4,7 +4,7 @@ from schemas.room import RoomOut
 
 
 class BookingCreate(BaseModel):
-    title: str = Field(min=3, max=80)
+    title: str = Field(min_length=3, max_length=80)
     day: date
     slot: int = Field(ge=1, le=8)
     room_id: int = Field(gt=0)
