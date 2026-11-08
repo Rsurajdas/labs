@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppSettings(BaseSettings):
     secret_key: SecretStr
 
-    database_url: PostgresDsn
+    database_url: str
 
     algorithm: str = "HS256"
 
