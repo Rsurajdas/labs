@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
-    secret_key: SecretStr
+    secret_key: str
 
     database_url: str
 
