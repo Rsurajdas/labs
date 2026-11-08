@@ -1,1 +1,19 @@
-# Q2 — BookingCreate and BookingOut. See ASSESSMENT.md.
+from datetime import date
+from pydantic import BaseModel, Field
+from schemas.room import RoomOut
+
+
+class BookingCreate(BaseModel):
+    title: str = Field(min=3, max=80)
+    day: date
+    slot: int = Field(ge=1, le=8)
+    room_id: int = Field(gt=0)
+
+
+class BookingOut(BaseModel):
+    id: int
+    title: str
+    day: date
+    slot: int
+    user_id: int
+    room: RoomOut
