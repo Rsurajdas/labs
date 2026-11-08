@@ -1,10 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from database import DB_DEPENDENCY
 from models.user import User
-from schemas.auth import UserCreate, UserOut
-from security import hash_password, verify_password
+from schemas.auth import Token, UserCreate, UserOut
+from security import create_access_token, hash_password, verify_password
+
+from config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -58,6 +63,29 @@ async def register(db: DB_DEPENDENCY, body: UserCreate):
     db.refresh(new_user)
 
     return new_user
+
+
+@router.post("/token", response_model=Token)
+async def sign_in(
+    formdata: Annotated[OAuth2PasswordRequestForm, Depends()], db: DB_DEPENDENCY
+):
+    user = authenticate_user(db, formdata.username, formdata.password)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers=["WWW-Authenticate", "Bearer"],
+        )
+
+    token = create_access_token(
+        user.username,
+        user.id,
+        user.role,
+        expires_delta=settings.access_token_expire_minutes,
+    )
+
+    return {"access_token": token, "token_type": "bearer"}
 
 
 #
