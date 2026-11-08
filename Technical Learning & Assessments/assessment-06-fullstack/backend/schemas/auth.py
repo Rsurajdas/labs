@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # GIVEN
@@ -7,4 +7,16 @@ class Token(BaseModel):
     token_type: str
 
 
-# Q3 — UserCreate and UserOut go below. See ASSESSMENT.md.
+class UserCreate(BaseModel):
+    username: str = Field(min_length=3, max_length=30)
+    email: str = Field(min_length=3, max_length=100)
+    password: str = Field(min_length=8)
+
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    email: str
+    role: str
+    is_active: bool
+    model_config = ConfigDict(from_attributes=True)
