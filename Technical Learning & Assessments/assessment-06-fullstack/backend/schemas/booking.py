@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from schemas.room import RoomOut
 
 
@@ -17,3 +17,4 @@ class BookingOut(BaseModel):
     slot: int
     user_id: int
     room: RoomOut
+    model_config = ConfigDict(from_attributes=True)
