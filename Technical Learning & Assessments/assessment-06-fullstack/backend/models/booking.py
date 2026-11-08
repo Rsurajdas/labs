@@ -17,3 +17,6 @@ class Booking(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     room = relationship("Room")
+
+
+# booking.room returns the Room object
