@@ -5,7 +5,7 @@ type LayoutProps = {
   onLogout: () => void;
 };
 
-export default function Layout({ isLoggedIn, onLogout }: LayoutProps) {
+export function Layout({ isLoggedIn, onLogout }: LayoutProps) {
   return (
     <>
       <header>
