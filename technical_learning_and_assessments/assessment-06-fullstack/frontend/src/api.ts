@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Booking, Room, User } from "./types";
+import type { Booking, NewBooking, Room, User } from "./types";
 
 // GIVEN
 export const api = axios.create({ baseURL: "http://localhost:8000" });
@@ -46,5 +46,21 @@ export async function getMyBookings(
   const res = await api.get<Booking[]>(path, {
     headers: authHeader(token),
   });
+  return res.data;
+}
+
+export async function createBooking(
+  token: string,
+  input: NewBooking,
+): Promise<Booking> {
+  const res = await api.post(
+    "/bookings",
+    {
+      ...input,
+    },
+    {
+      headers: authHeader(token),
+    },
+  );
   return res.data;
 }
