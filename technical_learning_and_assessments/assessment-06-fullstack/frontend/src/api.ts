@@ -2,7 +2,10 @@ import axios from "axios";
 import type { Booking, NewBooking, Room, User } from "./types";
 
 // GIVEN
-export const api = axios.create({ baseURL: "http://localhost:8000" });
+export const api = axios.create({
+  baseURL: "http://localhost:8000",
+  timeout: 15000,
+});
 
 // GIVEN
 type TokenResponse = { access_token: string; token_type: string };
