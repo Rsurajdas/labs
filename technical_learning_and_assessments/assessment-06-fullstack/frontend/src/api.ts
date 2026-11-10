@@ -30,7 +30,7 @@ export async function getRooms(): Promise<Room[]> {
 }
 
 export async function getRoom(id: number): Promise<Room> {
-  const res = await api.get<Room>(`/room/${id}`);
+  const res = await api.get<Room>(`/rooms/${id}`);
   return res.data;
 }
 
