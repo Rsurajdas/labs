@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import type { FetchState, Room } from "../types";
 import { getErrorMessage, getRoom } from "../api";
 
@@ -7,7 +7,7 @@ type RoomDetailPageProps = {
   token: string | null;
 };
 
-export function RoomDetailPage({}: RoomDetailPageProps) {
+export function RoomDetailPage({ token }: RoomDetailPageProps) {
   const [roomRes, setRoomRes] = useState<FetchState<Room>>({
     status: "loading",
   });
@@ -50,6 +50,12 @@ export function RoomDetailPage({}: RoomDetailPageProps) {
     <>
       <h2>{roomRes.data.name}</h2>
       <p>Capacity: {roomRes.data.capacity}</p>
+
+      {!token ? (
+        <p>
+          Please <Link to="/login">log in</Link> to book this room.
+        </p>
+      ) : null}
     </>
   );
 }
