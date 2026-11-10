@@ -1,6 +1,6 @@
 // Q11 — RoomDetailPage. See ASSESSMENT.md.
 import React from "react";
 
-export default function RoomDetailPage() {
+export function RoomDetailPage() {
   return <div>RoomDetailPage</div>;
 }

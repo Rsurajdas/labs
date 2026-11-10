@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { RoomsPage } from "./pages/RoomsPage";
-import RoomDetailPage from "./pages/RoomDetailPage";
+import { RoomDetailPage } from "./pages/RoomDetailPage";
 import { MyBookingsPage } from "./pages/MyBookingsPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
