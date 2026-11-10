@@ -21,7 +21,7 @@ export type BookingBase = {
 export type Booking = BookingBase & {
   id: number;
   user_id: number;
-  rome: Room;
+  room: Room;
 };
 
 export type NewBooking = BookingBase & {
