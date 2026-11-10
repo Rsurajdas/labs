@@ -14,11 +14,15 @@ export default function App() {
     <Routes>
       <Route
         path="/"
-        element={<Layout isLoggedIn={true} onLogout={() => {}} />}
+        element={
+          <Layout isLoggedIn={Boolean(token)} onLogout={() => setToken(null)} />
+        }
       >
         <Route index element={<RoomsPage />} />
-        <Route path={`rooms/:roomId`} element={<RoomDetailPage />} />
-
+        <Route
+          path={`rooms/:roomId`}
+          element={<RoomDetailPage token={token} />}
+        />
         <Route
           path={`/bookings`}
           element={
@@ -31,10 +35,7 @@ export default function App() {
             </>
           }
         />
-        <Route
-          path={`/login`}
-          element={<LoginPage onLogin={(token) => {}} />}
-        />
+        <Route path={`/login`} element={<LoginPage onLogin={setToken} />} />
         <Route path={`*`} element={<NotFoundPage />} />
       </Route>
     </Routes>
