@@ -4,7 +4,7 @@ import { getErrorMessage, getRooms } from "../api";
 import { Link } from "react-router-dom";
 
 export function RoomsPage() {
-  const [roomState, setRoomState] = useState<FetchState<Room[]>>({
+  const [roomsRes, setRoomsRes] = useState<FetchState<Room[]>>({
     status: "loading",
   });
   const [minCapacity, setMinCapacity] = useState("");
@@ -14,11 +14,11 @@ export function RoomsPage() {
     getRooms()
       .then((data) => {
         if (ignore) return;
-        setRoomState({ status: "success", data });
+        setRoomsRes({ status: "success", data });
       })
       .catch((e: unknown) => {
         if (ignore) return;
-        setRoomState({ status: "error", message: getErrorMessage(e) });
+        setRoomsRes({ status: "error", message: getErrorMessage(e) });
       });
 
     return () => {
@@ -26,7 +26,7 @@ export function RoomsPage() {
     };
   }, []);
 
-  const rooms = roomState.status === "success" ? roomState.data : [];
+  const rooms = roomsRes.status === "success" ? roomsRes.data : [];
 
   const modifiedRooms = useMemo(() => {
     if (!minCapacity) {
@@ -37,15 +37,13 @@ export function RoomsPage() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [rooms, minCapacity]);
 
-  if (roomState.status === "loading") {
+  if (roomsRes.status === "loading") {
     return <p>Loading rooms…</p>;
   }
 
-  if (roomState.status === "error") {
-    return <p role="alert">{roomState.message}</p>;
+  if (roomsRes.status === "error") {
+    return <p role="alert">{roomsRes.message}</p>;
   }
-
-  // console.log({ modifiedRooms });
 
   return (
     <>
