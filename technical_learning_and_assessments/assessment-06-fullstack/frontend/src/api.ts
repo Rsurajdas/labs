@@ -16,3 +16,24 @@ export async function login(
   const res = await api.post<TokenResponse>("/auth/token", body);
   return res.data.access_token;
 }
+
+export function authHeader(token: string) {
+  return { Authorization: `Bearer ${token}` };
+}
+
+export async function getRooms(): Promise<Room[]> {
+  const res = await api.get<Room[]>("/rooms");
+  return res.data;
+}
+
+export async function getRoom(id: number): Promise<Room> {
+  const res = await api.get<Room>(`/room/${id}`);
+  return res.data;
+}
+
+export async function getMe(token: string): Promise<User> {
+  const res = await api.get<User>("/auth/me", {
+    headers: authHeader(token),
+  });
+  return res.data;
+}
