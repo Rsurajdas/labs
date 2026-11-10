@@ -73,3 +73,22 @@ export async function deleteBooking(token: string, id: number): Promise<void> {
     headers: authHeader(token),
   });
 }
+
+export function getErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      return "Cannot reach the server";
+    }
+    if (typeof error.response.data.detail === "string") {
+      return error.response.data.detail;
+    }
+    if (error.response.status === 422) {
+      return "Please check the form fields";
+    }
+    return `Request failed (${error.response.status})`;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return "Something went wrong";
+}
