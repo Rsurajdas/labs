@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import type { FetchState, Room } from "../types";
+import type { FetchState, NewBooking, Room } from "../types";
 import { getErrorMessage, getRoom } from "../api";
 
 type RoomDetailPageProps = {
@@ -11,6 +11,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
   const [roomRes, setRoomRes] = useState<FetchState<Room>>({
     status: "loading",
   });
+  const [errMsg, setErrMsg] = useState("");
   const params = useParams();
   const roomId = Number(params.roomId);
 
@@ -38,6 +39,16 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     };
   }, [roomId]);
 
+  function submitHandler(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setErrMsg("");
+    const formData = new FormData(e.currentTarget);
+    const title = String(formData.get("title"));
+    if (title.trim().length < 3) {
+      setErrMsg("Title must be at least 3 characters");
+    }
+  }
+
   if (roomRes.status === "loading") {
     return <p>Loading room…</p>;
   }
@@ -55,7 +66,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
           Please <Link to="/login">log in</Link> to book this room.
         </p>
       ) : (
-        <form>
+        <form onSubmit={submitHandler}>
           <div>
             <label htmlFor="title">Title</label>
             <input type="text" id="title" name="title" />
@@ -78,6 +89,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
             </select>
           </div>
           <button type="submit">Book</button>
+          <p role="alert">{errMsg}</p>
         </form>
       )}
     </>
