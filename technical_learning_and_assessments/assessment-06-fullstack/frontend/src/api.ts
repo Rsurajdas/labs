@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Room, User } from "./types";
+import type { Booking, Room, User } from "./types";
 
 // GIVEN
 export const api = axios.create({ baseURL: "http://localhost:8000" });
@@ -33,6 +33,17 @@ export async function getRoom(id: number): Promise<Room> {
 
 export async function getMe(token: string): Promise<User> {
   const res = await api.get<User>("/auth/me", {
+    headers: authHeader(token),
+  });
+  return res.data;
+}
+
+export async function getMyBookings(
+  token: string,
+  day?: string,
+): Promise<Booking[]> {
+  const path = day ? `/bookings?day=${day}` : "/bookings";
+  const res = await api.get<Booking[]>(path, {
     headers: authHeader(token),
   });
   return res.data;
