@@ -16,23 +16,25 @@ export function MyBookingsPage({ token }: MyBookingsPageProps) {
   const [day, setDay] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const loadBookings = useCallback(async () => {
-    setError("");
-    try {
-      const data = await getMyBookings(token, day);
-      setBookings(data);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    }
-  }, [day, token]);
-
   useEffect(() => {
-    loadBookings();
-  }, [day, token]);
+    let ignore = false;
+    getMyBookings(token, day)
+      .then((data) => {
+        if (ignore) return;
+        setBookings(data);
+        setError(null);
+      })
+      .catch((err: unknown) => {
+        if (!ignore) setError(getErrorMessage(err));
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [token, day]);
 
   const roomCount = useMemo(
     () => new Set(bookings.map((booking) => booking.room.id)).size,
-    [day],
+    [bookings],
   );
 
   async function handleCancel(id: number) {
