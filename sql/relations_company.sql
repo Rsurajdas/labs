@@ -20,6 +20,8 @@ CREATE TABLE employees (
     brithdate DATE NOT NULL,
     email VARCHAR(200) UNIQUE NOT NULL,
     team_id INT REFERENCES teams (id) ON DELETE
+    SET NULL,
+        supervisor_id INT REFERENCES employees ON DELETE
     SET NULL
 );
 CREATE TABLE internet_accounts (
