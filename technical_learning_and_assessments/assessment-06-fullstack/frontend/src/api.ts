@@ -56,7 +56,7 @@ export async function createBooking(
   token: string,
   input: NewBooking,
 ): Promise<Booking> {
-  const res = await api.post(
+  const res = await api.post<Booking>(
     "/bookings",
     {
       ...input,
@@ -79,8 +79,14 @@ export function getErrorMessage(error: unknown): string {
     if (!error.response) {
       return "Cannot reach the server";
     }
-    if (typeof error.response.data.detail === "string") {
-      return error.response.data.detail;
+    const data = error.response.data;
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "detail" in data &&
+      typeof data.detail === "string"
+    ) {
+      return data.detail;
     }
     if (error.response.status === 422) {
       return "Please check the form fields";
