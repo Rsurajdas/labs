@@ -1,5 +1,4 @@
 from datetime import date
-from turtle import st
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Path
@@ -33,7 +32,7 @@ async def get_all_bookings(
 
 @router.post("/", response_model=BookingOut, status_code=status.HTTP_201_CREATED)
 async def create_booking(user: CurrentUser, db: DB_DEPENDENCY, body: BookingCreate):
-    if db.query(Room).filter(Room.id == body.room_id).first():
+    if db.query(Room).filter(Room.id == body.room_id).first() is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Room not found"
         )
