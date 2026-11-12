@@ -8,6 +8,10 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **Full-stack room-booking app (FastAPI + React/TS):** `technical_learning_and_assessments/assessment-06-fullstack/` is the project behind [Assessment #06](#assessments) — a "Study Room Booking" app where users book study rooms by day and hourly slot. This is the first assessment that spans a backend and a frontend together.
+  - **Backend (`backend/`):** a FastAPI API over `users`, `rooms`, and `bookings` on PostgreSQL, with flat imports (`from database import ...`) like the todo API, plus `models/`, `schemas/`, and `routers/` packages. `config.py` reads secrets from the environment via `pydantic-settings` (`settings.secret_key`/`database_url`, no hardcoded fallback, so a missing variable fails at startup). `security.py` hashes with `bcrypt` and issues 30-minute HS256 JWTs; `dependencies.py` turns a token into the SQLAlchemy `User` (`get_current_user`, `require_admin`, and the `CurrentUser`/`AdminUser` aliases). `POST /auth/register` returns 409 on a duplicate username/email, room management is admin-only, bookings are owner-scoped (403/404/409/204), and `Booking.room_id`/`user_id` cascade on delete.
+  - **Frontend (`frontend/`):** React 19 + `react-router-dom` v7 (declarative `<Routes>`) + typed `axios`, no context. Shared types in `types.ts` (including a generic `FetchState<T>` discriminated union), a typed API client in `api.ts` (axios generics plus a `getErrorMessage` helper), a `Layout` with `NavLink`s and `<Outlet />`, a protected `/bookings` route, and pages for the room list (`useMemo` filtering), room detail (URL params + booking form), my bookings (fetch-with-cleanup + cancel), and login.
+  - The code here is the submission, with post-grading fixes being applied — the frontend route/hook fixes are in (logout navigation, room-id validation, the `MyBookingsPage` rewrite); some backend fixes are still pending (`algorithms` as a list, the `GET /bookings` admin scoping, a stray `from turtle import st`).
 - **React + TypeScript assessment app:** `typescript/assessment-05-react-ts/` is a "Workshop Registration Desk" Vite app built over the 12 questions of [Assessment #05](#assessments), each later component building on the earlier ones. It covers shared types in `types.ts`, a `Card` with `PropsWithChildren`, a `Button` wrapper over `ComponentPropsWithoutRef<"button">` with spread-order-sensitive `className` merging, a polymorphic `Container` (`as?: ElementType`), a discriminated-union `TicketDetails`, a deliberately broken `SearchBox` to debug (Q7), a `TextField` with `forwardRef`, a `RegistrationForm` exposing an imperative `clear()` via `useImperativeHandle`, an `AttendeeList`, and `App` owning all state (lifted state, case-insensitive duplicate check, immutable updates, and the form ref). The code here is the submission plus the fixes applied after grading.
 - **FastAPI expense tracker:** `fastapi/assessment-04-expense-tracker/` is a standalone app (`users`, `categories`, `expenses` on PostgreSQL), laid out like the todo API with `models/`, `schemas/`, and `routers/` packages. The tables are created by `schema.sql`, not `Base.metadata.create_all()`, and the expense/category routes aren't JWT-protected (`user_id` is passed in the body or query).
   - **Auth (`/auth`):** `POST /register` hashes passwords with `bcrypt`, `POST /sign_in` takes an `OAuth2PasswordRequestForm` and returns a 30-minute HS256 JWT (`sub`, `id`, `exp`). `authenticate_user` only matches by username and returns `401` on bad credentials; `find_user` filters on `is_active`.
@@ -19,7 +23,7 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Two ways to log in:** `POST /auth/login` takes a custom Pydantic body (email + password), and `POST /auth/sign_in` takes an `OAuth2PasswordRequestForm` (username + password). Both go through `authenticate_user`, which only matches active users and returns `401` on bad credentials.
   - **JWTs:** a successful login returns a 30-minute HS256 token from `python-jose` (`sub`, `id`, `role`, `exp`). `decode_jwt` validates it through `OAuth2PasswordBearer` and returns `{username, id, role}`, raising `401` if any claim is missing.
   - **Todos:** full CRUD on `/todos`, with `Field` validation (priority 1–5, length limits), `Path(gt=0)`, 404s, and a `204` on delete. Every route depends on `decode_jwt` through a shared `USER_DEPENDENCY`, so todos are scoped to the logged-in user: list/read/update are filtered by `owner_id`, and create fills in `owner_id` from the token. Deleting is admin-only — the route returns `401` unless the token's `role` is `"admin"`.
-- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `Technical Learning & Assessments/`; the project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
+- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `technical_learning_and_assessments/` (including the full-stack Assessment #06, a complete project of its own under `assessment-06-fullstack/`); the other project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
 - **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) that started as a set of wrapper/forwarded-ref components (now under `src/components/UI/`) and grew into a "ReactTimer" app reusing them, with a Context + `useReducer` store.
   - **Reusable UI (`components/UI/`):** `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`. `Button` is a discriminated union on `tag` (`"button"` or `"anchor"`), so it renders either a `<button>` or an `<a>`. `PolymorphicComponent` takes an `el: ElementType` prop and renders whatever element it's given. `Form` wraps a `<form>` (extending `ComponentPropsWithoutRef<"form">`), handles `onSubmit` by collecting `FormData` into an object and passing it to an `onSave` callback, and exposes an imperative `clear()` method to the parent via `forwardRef` + `useImperativeHandle` (typed by the `FormHandleRef` interface).
@@ -47,6 +51,7 @@ Each set is answered without running the code first, then graded. The scores are
 | 03 | 2026-10-20 | PostgreSQL: company projects database                 | 7 / 12 (58%) |
 | 04 | 2026-10-31 | FastAPI: expense tracker (SQLAlchemy, Pydantic, auth) | 4 / 12 (33%) |
 | 05 | 2026-11-01 | React + TypeScript: workshop registration app         | 3 / 12 (25%) |
+| 06 | 2026-11-12 | Full stack: FastAPI + React/TS room booking           | 4 / 12 (33%) |
 
 Where points were lost:
 
@@ -55,6 +60,7 @@ Where points were lost:
 - **#03:** constraints and FKs, finding unmatched records, debugging, views with `DISTINCT`, and cascading deletes.
 - **#04:** auth (bcrypt/login/JWT) went 0/3, plus `NULL`/optional handling, missed status codes, and `ON DELETE` behaviour. Most answers were almost right but missed a single stated requirement — the same pattern as #01.
 - **#05:** first dedicated React assessment. The architecture was right almost everywhere; the marks went on spread/prop order, how `&&` renders a falsy `0`, which element an attribute belongs on, validating `FormData` values, and React 18 event types (`SubmitEvent` doesn't exist). 7 of the 8 wrong answers had the right structure but missed a stated detail — the same requirement-completeness pattern as #01 and #04.
+- **#06:** first full-stack assessment (backend and frontend together). The structure was right almost everywhere; the marks went on auth failure paths (`None` vs `return None`, a missing `is_active` check, `algorithms` passed as a string not a list), existence checks before insert (checking `is None` on a required field instead of querying the DB), the Rules of Hooks (an early return before `useEffect`) and `useMemo` deps, a missing `api.post<Booking>` axios generic, and HTTP response prediction (unanswered again, as in #04). 6 of the 7 wrong answers had the right shape but missed a stated detail — the same requirement-completeness pattern as #01, #04, and #05.
 
 ## Structure
 
@@ -62,10 +68,17 @@ One top-level directory per topic. Inside it, whatever structure makes sense for
 
 ```
 labs/
-├── Technical Learning & Assessments/  # Graded self-assessments (#04 and #05 live inside the projects they cover)
+├── technical_learning_and_assessments/  # Graded self-assessments (#04 and #05 live inside the projects they cover)
 │   ├── Assessment #01/            # Mixed topics: Questions.md, answer files, Answers.md report
 │   ├── Assessment #02/            # TypeScript
-│   └── Assessment #03/            # PostgreSQL company projects database
+│   ├── Assessment #03/            # PostgreSQL company projects database
+│   └── assessment-06-fullstack/   # Full-stack room booking (Assessment #06): FastAPI backend/ + React frontend/
+│       ├── ASSESSMENT.md          # Brief (12 questions: 6 backend, 6 frontend)
+│       ├── ANSWERS.md             # Written answers
+│       ├── RESULT.md              # Evaluation report (4/12)
+│       ├── learning-scope.md      # Topic scope snapshot
+│       ├── backend/               # FastAPI API: config.py, security.py, dependencies.py, seed.py, models/, schemas/, routers/
+│       └── frontend/              # React 19 + Vite: api.ts, types.ts, components/ (Layout), pages/ (Rooms, RoomDetail, MyBookings, Login)
 ├── fastapi/                       # FastAPI projects, one per folder
 │   ├── README.md
 │   ├── books/                     # Books API, built twice
@@ -137,7 +150,7 @@ labs/
 
 | Directory                                                                         | What's in it                                                                              |
 | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [`Technical Learning & Assessments/`](./Technical%20Learning%20%26%20Assessments) | Graded self-assessments with per-question evaluation reports                              |
+| [`technical_learning_and_assessments/`](./technical_learning_and_assessments)     | Graded self-assessments with per-question evaluation reports, plus the #06 project        |
 | [`fastapi/`](./fastapi)                                                           | REST APIs with FastAPI: CRUD, SQLAlchemy, response models, routers, bcrypt, JWT auth      |
 | [`js/`](./js)                                                                     | JavaScript problem solving from Codewars and other practice sites                         |
 | [`python/`](./python)                                                             | Python data structures, imports, and object-oriented programming                          |
@@ -189,6 +202,17 @@ cd fastapi/todo && uvicorn main:app --reload
 createdb -U postgres expenses
 psql -U postgres -d expenses -f fastapi/assessment-04-expense-tracker/schema.sql
 cd fastapi/assessment-04-expense-tracker && uvicorn main:app --reload
+
+# Room booking API (Assessment #06; deps in backend/requirements.txt; reads SECRET_KEY + DATABASE_URL from .env)
+cd technical_learning_and_assessments/assessment-06-fullstack/backend
+pip install -r requirements.txt
+cp .env.example .env            # then set SECRET_KEY and DATABASE_URL
+createdb -U postgres room_booking
+python seed.py                  # admin/adminpass123 + three rooms
+uvicorn main:app --reload       # http://localhost:8000/docs
+
+# Room booking frontend (React 19 + Vite, talks to the API at :8000)
+cd technical_learning_and_assessments/assessment-06-fullstack/frontend && npm install && npm run dev
 
 # Rust
 cd rust/<project> && cargo run
