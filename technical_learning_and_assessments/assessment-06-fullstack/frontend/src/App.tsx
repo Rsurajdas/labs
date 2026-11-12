@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { RoomsPage } from "./pages/RoomsPage";
 import { RoomDetailPage } from "./pages/RoomDetailPage";
@@ -10,13 +10,17 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 export default function App() {
   const [token, setToken] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+  function handleLogout() {
+    setToken(null);
+    navigate("/");
+  }
+
   return (
     <Routes>
       <Route
         path="/"
-        element={
-          <Layout isLoggedIn={Boolean(token)} onLogout={() => setToken(null)} />
-        }
+        element={<Layout isLoggedIn={Boolean(token)} onLogout={handleLogout} />}
       >
         <Route index element={<RoomsPage />} />
         <Route
