@@ -13,33 +13,30 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
   });
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const params = useParams();
+  const params = useParams<{ roomId: string }>();
   const roomId = Number(params.roomId);
   const navigate = useNavigate();
-
-  if (!Number.isInteger(roomId) || roomId <= 0) {
-    return <p>Invalid room id</p>;
-  }
+  const isValidId = Number.isInteger(roomId) && roomId > 0;
 
   useEffect(() => {
+    if (!isValidId) return;
     let ignore = false;
 
     setRoomRes({ status: "loading" });
 
     getRoom(roomId)
       .then((data) => {
-        if (ignore) return;
-        setRoomRes({ status: "success", data });
+        if (!ignore) setRoomRes({ status: "success", data });
       })
       .catch((e: unknown) => {
-        if (ignore) return;
-        setRoomRes({ status: "error", message: getErrorMessage(e) });
+        if (!ignore)
+          setRoomRes({ status: "error", message: getErrorMessage(e) });
       });
 
     return () => {
       ignore = true;
     };
-  }, [roomId]);
+  }, [roomId, isValidId]);
 
   async function submitHandler(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -78,6 +75,8 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     }
   }
 
+  if (!isValidId) return <p>Invalid room id</p>;
+
   if (roomRes.status === "loading") {
     return <p>Loading room…</p>;
   }
@@ -102,7 +101,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
           </div>
           <div>
             <label htmlFor="day">Day</label>
-            <input type="date" id="day" name="day" />
+            <input type="date" id="day" name="day" required />
           </div>
           <div>
             <label htmlFor="slot">Slot</label>
@@ -120,7 +119,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
           <button type="submit" disabled={loading}>
             Book
           </button>
-          <p role="alert">{errMsg}</p>
+          {errMsg ? <p role="alert">{errMsg}</p> : null}
         </form>
       )}
     </>
