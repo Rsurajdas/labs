@@ -17,6 +17,7 @@ export function MyBookingsPage({ token }: MyBookingsPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   const loadBookings = useCallback(async () => {
+    setError("");
     try {
       const data = await getMyBookings(token, day);
       setBookings(data);
@@ -34,10 +35,14 @@ export function MyBookingsPage({ token }: MyBookingsPageProps) {
     [day],
   );
 
-  function handleCancel(id: number, index: number) {
-    deleteBooking(token, id);
-    bookings.splice(index, 1);
-    setBookings(bookings);
+  async function handleCancel(id: number) {
+    setError("");
+    try {
+      await deleteBooking(token, id);
+      setBookings((prev) => prev.filter((b) => b.id !== id));
+    } catch (error) {
+      setError(getErrorMessage(error));
+    }
   }
 
   return (
@@ -58,14 +63,11 @@ export function MyBookingsPage({ token }: MyBookingsPageProps) {
       <p>Rooms booked: {roomCount}</p>
       {bookings.length ? (
         <ul>
-          {bookings.map((booking, index) => (
+          {bookings.map((booking) => (
             <li key={booking.id}>
               {booking.title} — {booking.room.name}, {booking.day}, slot{" "}
               {booking.slot}{" "}
-              <button
-                type="button"
-                onClick={() => handleCancel(booking.id, index)}
-              >
+              <button type="button" onClick={() => handleCancel(booking.id)}>
                 Cancel
               </button>
             </li>
