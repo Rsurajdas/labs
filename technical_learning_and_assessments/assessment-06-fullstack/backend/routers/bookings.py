@@ -8,6 +8,7 @@ from starlette import status
 from database import DB_DEPENDENCY
 from dependencies import CurrentUser
 from models.booking import Booking
+from models.room import Room
 from schemas.booking import BookingCreate, BookingOut
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -32,7 +33,7 @@ async def get_all_bookings(
 
 @router.post("/", response_model=BookingOut, status_code=status.HTTP_201_CREATED)
 async def create_booking(user: CurrentUser, db: DB_DEPENDENCY, body: BookingCreate):
-    if body.room_id is None:
+    if db.query(Room).filter(Room.id == body.room_id).first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Room not found"
         )
