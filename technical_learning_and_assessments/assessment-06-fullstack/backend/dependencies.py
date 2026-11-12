@@ -15,7 +15,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: DB_DEPENDENCY):
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=settings.algorithm)
+        payload = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        )
         username = payload.get("sub")
         user_id = payload.get("id")
         role = payload.get("role")
