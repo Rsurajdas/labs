@@ -54,7 +54,6 @@ export function MyBookingsPage({ token }: MyBookingsPageProps) {
           type="date"
           value={day}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            console.log({ val: event.target.value });
             setDay(event.target.value);
           }}
         />
