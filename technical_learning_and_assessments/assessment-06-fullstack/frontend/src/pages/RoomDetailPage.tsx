@@ -1,7 +1,7 @@
 import { useEffect, useState, type SubmitEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import type { FetchState, NewBooking, Room } from "../types";
-import { getErrorMessage, getRoom } from "../api";
+import { createBooking, getErrorMessage, getRoom } from "../api";
 
 type RoomDetailPageProps = {
   token: string | null;
@@ -12,8 +12,10 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     status: "loading",
   });
   const [errMsg, setErrMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const roomId = Number(params.roomId);
+  const navigate = useNavigate();
 
   if (!Number.isInteger(roomId) || roomId <= 0) {
     return <p>Invalid room id</p>;
@@ -39,13 +41,40 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     };
   }, [roomId]);
 
-  function submitHandler(e: SubmitEvent<HTMLFormElement>) {
+  async function submitHandler(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrMsg("");
+
+    const from = e.currentTarget;
     const formData = new FormData(e.currentTarget);
-    const title = String(formData.get("title"));
-    if (title.trim().length < 3) {
+    const title = String(formData.get("title") ?? "").trim();
+
+    if (title.length < 3) {
       setErrMsg("Title must be at least 3 characters");
+      return;
+    }
+
+    if (!token) {
+      setErrMsg("Authentication token is missing");
+      return;
+    }
+
+    const input: NewBooking = {
+      title,
+      day: String(formData.get("day")),
+      slot: Number(formData.get("slot")),
+      room_id: roomId,
+    };
+    try {
+      setLoading(true);
+      await createBooking(token, input);
+
+      navigate("/bookings");
+    } catch (error) {
+      setErrMsg(getErrorMessage(error));
+    } finally {
+      setLoading(false);
+      from.reset();
     }
   }
 
@@ -88,7 +117,9 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
               <option value="8">8</option>
             </select>
           </div>
-          <button type="submit">Book</button>
+          <button type="submit" disabled={loading}>
+            Book
+          </button>
           <p role="alert">{errMsg}</p>
         </form>
       )}
