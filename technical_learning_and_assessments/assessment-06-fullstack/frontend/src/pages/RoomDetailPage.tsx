@@ -41,7 +41,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     };
   }, [roomId]);
 
-  function submitHandler(e: SubmitEvent<HTMLFormElement>) {
+  async function submitHandler(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrMsg("");
 
@@ -67,7 +67,7 @@ export function RoomDetailPage({ token }: RoomDetailPageProps) {
     };
     try {
       setLoading(true);
-      createBooking(token, input);
+      await createBooking(token, input);
 
       navigate("/bookings");
     } catch (error) {
