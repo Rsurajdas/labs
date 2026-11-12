@@ -24,11 +24,8 @@ def authenticate_user(db: DB_DEPENDENCY, username: str, password: str):
         .first()
     )
 
-    if user is None:
+    if user is None or not verify_password(password, user.hashed_password):
         return None
-
-    if not verify_password(password, user.hashed_password):
-        None
 
     return user
 
