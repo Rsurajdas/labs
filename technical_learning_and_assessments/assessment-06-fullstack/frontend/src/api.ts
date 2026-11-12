@@ -69,7 +69,7 @@ export async function createBooking(
 }
 
 export async function deleteBooking(token: string, id: number): Promise<void> {
-  api.delete(`/bookings/${id}`, {
+  await api.delete(`/bookings/${id}`, {
     headers: authHeader(token),
   });
 }
