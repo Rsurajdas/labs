@@ -6,3 +6,5 @@ SELECT COUNT(amount_tipped)
 FROM bookings;
 SELECT COUNT(*)
 FROM payment_methods;
+SELECT COUNT(*)
+FROM tables;
