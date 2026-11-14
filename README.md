@@ -13,6 +13,7 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Frontend (`frontend/`):** React 19 + `react-router-dom` v7 (declarative `<Routes>`) + typed `axios`, no context. Shared types in `types.ts` (including a generic `FetchState<T>` discriminated union), a typed API client in `api.ts` (axios generics plus a `getErrorMessage` helper), a `Layout` with `NavLink`s and `<Outlet />`, a protected `/bookings` route, and pages for the room list (`useMemo` filtering), room detail (URL params + booking form), my bookings (fetch-with-cleanup + cancel), and login.
   - The code here is the submission, with post-grading fixes applied — the frontend route/hook fixes are in (logout navigation, room-id validation, the `MyBookingsPage` rewrite), and the backend fixes are in too (`algorithms` passed as a list in `get_current_user`, `GET /bookings` admin scoping, a room-existence check before booking, and the stray `from turtle import st` import removed from `routers/bookings.py`).
 - **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `technical_learning_and_assessments/` (including the full-stack Assessment #06, a complete project of its own under `assessment-06-fullstack/`); the other project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
+- **SQL aggregates & grouping:** `sql/aggregate_and_grouping/` is a new `restaurants` schema split across three files (`create_queries.sql`, `insert_queries.sql`, `queries.sql`) with `payment_methods`, `tables`, and a `bookings` fact table (`NUMERIC(6, 2)` money columns, a nullable `amount_tipped`, and `payment_id`/`table_id` foreign keys). The queries so far are `COUNT`-based — `COUNT(*)` vs `COUNT(column)` (which skips the `NULL` tips) and `COUNT(DISTINCT booking_date)` — as a lead-in to `GROUP BY` and the other aggregates.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table with a composite primary key (`employee_id`, `project_id`), a self-referencing foreign key (`employees.supervisor_id → employees.id`) for the reporting hierarchy, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
 - **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) that started as a set of wrapper/forwarded-ref components (now under `src/components/UI/`) and grew into a "ReactTimer" app reusing them, with a Context + `useReducer` store.
   - **Reusable UI (`components/UI/`):** `Inputs` extends `ComponentPropsWithoutRef<"input">`, forwards the remaining props with `...props`, and uses `forwardRef<HTMLInputElement>` to pass a ref down to the `<input>`. `Button` is a discriminated union on `tag` (`"button"` or `"anchor"`), so it renders either a `<button>` or an `<a>`. `PolymorphicComponent` takes an `el: ElementType` prop and renders whatever element it's given. `Form` wraps a `<form>` (extending `ComponentPropsWithoutRef<"form">`), handles `onSubmit` by collecting `FormData` into an object and passing it to an `onSave` callback, and exposes an imperative `clear()` method to the parent via `forwardRef` + `useImperativeHandle` (typed by the `FormHandleRef` interface).
@@ -114,6 +115,7 @@ labs/
 │   ├── relations.sql              # Foreign keys and JOINs: cities → addresses → users
 │   ├── relations_insert_data_query.sql  # Seed data for relations.sql
 │   ├── relations_company.sql      # Company schema: many-to-many, ON DELETE rules
+│   ├── aggregate_and_grouping/    # restaurants schema: create/insert/queries, COUNT aggregates
 │   └── Assessment/                # Bookstore schema, constraints, CRUD, joins, CRUD tasks
 ├── typescript/                    # TypeScript fundamentals
 │   ├── README.md
@@ -140,15 +142,15 @@ labs/
 └── package.json                   # Node tooling (TypeScript compiler)
 ```
 
-| Directory                                                                         | What's in it                                                                              |
-| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [`technical_learning_and_assessments/`](./technical_learning_and_assessments)     | Graded self-assessments with per-question evaluation reports, plus the #06 project        |
-| [`fastapi/`](./fastapi)                                                           | REST APIs with FastAPI: CRUD, SQLAlchemy, response models, routers, bcrypt, JWT auth      |
-| [`js/`](./js)                                                                     | JavaScript problem solving from Codewars and other practice sites                         |
-| [`python/`](./python)                                                             | Python data structures, imports, and object-oriented programming                          |
-| [`rust/`](./rust)                                                                 | Rust fundamentals: variables, mutability, and data types                                  |
-| [`sql/`](./sql)                                                                   | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs, many-to-many |
-| [`typescript/`](./typescript)                                                     | TypeScript types, interfaces, unions, generics, and three React + TS apps                 |
+| Directory                                                                     | What's in it                                                                                          |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [`technical_learning_and_assessments/`](./technical_learning_and_assessments) | Graded self-assessments with per-question evaluation reports, plus the #06 project                    |
+| [`fastapi/`](./fastapi)                                                       | REST APIs with FastAPI: CRUD, SQLAlchemy, response models, routers, bcrypt, JWT auth                  |
+| [`js/`](./js)                                                                 | JavaScript problem solving from Codewars and other practice sites                                     |
+| [`python/`](./python)                                                         | Python data structures, imports, and object-oriented programming                                      |
+| [`rust/`](./rust)                                                             | Rust fundamentals: variables, mutability, and data types                                              |
+| [`sql/`](./sql)                                                               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs, many-to-many, aggregates |
+| [`typescript/`](./typescript)                                                 | TypeScript types, interfaces, unions, generics, and three React + TS apps                             |
 
 ## Conventions
 
@@ -224,6 +226,13 @@ psql -U postgres -d relations -f sql/relations_insert_data_query.sql
 # relations_company.sql is tables only; the seed data is in Assessment #03/Questions.md
 createdb -U postgres company
 psql -U postgres -d company -f sql/relations_company.sql
+
+# aggregate_and_grouping is the "restaurants" database (PostgreSQL, SERIAL keys).
+# create_queries.sql has a CREATE DATABASE line that errors once the db exists, then psql carries on.
+createdb -U postgres restaurants
+psql -U postgres -d restaurants -f sql/aggregate_and_grouping/create_queries.sql
+psql -U postgres -d restaurants -f sql/aggregate_and_grouping/insert_queries.sql
+psql -U postgres -d restaurants -f sql/aggregate_and_grouping/queries.sql
 ```
 
 ## Adding a new topic
