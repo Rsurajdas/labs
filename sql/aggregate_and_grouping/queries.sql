@@ -1,0 +1,8 @@
+SELECT COUNT(*)
+FROM bookings;
+SELECT COUNT(booking_date)
+from bookings;
+SELECT COUNT(amount_tipped)
+FROM bookings;
+SELECT COUNT(*)
+FROM payment_methods;
