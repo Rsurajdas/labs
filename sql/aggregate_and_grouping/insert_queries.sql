@@ -1,0 +1,27 @@
+INSERT INTO payment_methods (name)
+VALUES ('Cash'),
+    ('Credit Card'),
+    ('Debit Card'),
+    ('UPI'),
+    ('Google Pay'),
+    ('PhonePe'),
+    ('Paytm'),
+    ('Net Banking'),
+    ('Gift Card'),
+    ('Wallet');
+INSERT INTO tables (num_seats, category)
+VALUES (2, 'Regular'),
+    (2, 'Regular'),
+    (2, 'Window Side'),
+    (4, 'Regular'),
+    (4, 'Family'),
+    (4, 'Window Side'),
+    (4, 'Outdoor'),
+    (6, 'Family'),
+    (6, 'Outdoor'),
+    (6, 'VIP'),
+    (8, 'Family'),
+    (8, 'VIP'),
+    (10, 'Private Dining'),
+    (12, 'Private Dining'),
+    (4, 'Couple');
