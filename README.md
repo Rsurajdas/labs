@@ -8,6 +8,7 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **Redis basics:** `redis/` is a new topic — a RedisInsight notebook (`my-linear-private-notebook.json`, "Basic Strings") working through string commands: `SET`/`GET`, the inline `GET` option on `SET`, and the `NX` (set only if absent), `XX` (set only if present), and `EX` (expire in seconds) flags. First look at Redis as a key-value store.
 - **Full-stack room-booking app (FastAPI + React/TS):** `technical_learning_and_assessments/assessment-06-fullstack/` is the project behind [Assessment #06](#assessments) — a "Study Room Booking" app where users book study rooms by day and hourly slot. This is the first assessment that spans a backend and a frontend together.
   - **Backend (`backend/`):** a FastAPI API over `users`, `rooms`, and `bookings` on PostgreSQL, with flat imports (`from database import ...`) like the todo API, plus `models/`, `schemas/`, and `routers/` packages. `config.py` reads secrets from the environment via `pydantic-settings` (`settings.secret_key`/`database_url`, no hardcoded fallback, so a missing variable fails at startup). `security.py` hashes with `bcrypt` and issues 30-minute HS256 JWTs; `dependencies.py` turns a token into the SQLAlchemy `User` (`get_current_user`, `require_admin`, and the `CurrentUser`/`AdminUser` aliases). `POST /auth/register` returns 409 on a duplicate username/email, room management is admin-only, bookings are owner-scoped (403/404/409/204), and `Booking.room_id`/`user_id` cascade on delete.
   - **Frontend (`frontend/`):** React 19 + `react-router-dom` v7 (declarative `<Routes>`) + typed `axios`, no context. Shared types in `types.ts` (including a generic `FetchState<T>` discriminated union), a typed API client in `api.ts` (axios generics plus a `getErrorMessage` helper), a `Layout` with `NavLink`s and `<Outlet />`, a protected `/bookings` route, and pages for the room list (`useMemo` filtering), room detail (URL params + booking form), my bookings (fetch-with-cleanup + cancel), and login.
@@ -101,6 +102,8 @@ labs/
 │   ├── README.md
 │   ├── dict.py, list.py, imports.py
 │   └── oop/                       # Classes and inheritance (Enemy, Zombie, Ogre, Weapon)
+├── redis/                         # Redis practice (RedisInsight notebooks)
+│   └── my-linear-private-notebook.json  # "Basic Strings": SET/GET with NX, XX, EX, inline GET
 ├── rust/                          # Rust course projects
 │   ├── hello_world/
 │   ├── variables-and-mutability/
@@ -148,6 +151,7 @@ labs/
 | [`fastapi/`](./fastapi)                                                       | REST APIs with FastAPI: CRUD, SQLAlchemy, response models, routers, bcrypt, JWT auth                  |
 | [`js/`](./js)                                                                 | JavaScript problem solving from Codewars and other practice sites                                     |
 | [`python/`](./python)                                                         | Python data structures, imports, and object-oriented programming                                      |
+| [`redis/`](./redis)                                                           | Redis basics in RedisInsight notebooks: string commands and set options (NX, XX, EX)                  |
 | [`rust/`](./rust)                                                             | Rust fundamentals: variables, mutability, and data types                                              |
 | [`sql/`](./sql)                                                               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs, many-to-many, aggregates |
 | [`typescript/`](./typescript)                                                 | TypeScript types, interfaces, unions, generics, and three React + TS apps                             |
@@ -207,6 +211,10 @@ uvicorn main:app --reload       # http://localhost:8000/docs
 
 # Room booking frontend (React 19 + Vite, talks to the API at :8000)
 cd technical_learning_and_assessments/assessment-06-fullstack/frontend && npm install && npm run dev
+
+# Redis (RedisInsight notebook — not a shell script)
+# Open RedisInsight, connect to a Redis server, and import redis/my-linear-private-notebook.json
+# into Workbench; run the cells there. Equivalent commands also run in redis-cli.
 
 # Rust
 cd rust/<project> && cargo run
