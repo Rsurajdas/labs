@@ -42,4 +42,7 @@ WHERE amount_billed >= 1800
 SELECT MAX(b.num_guests) AS max_guests,
     MAX(t.num_seats) AS max_seats
 FROM bookings AS b
-    INNER JOIN tables as t ON b.table_id = t.id;
+    INNER JOIN tables as t ON b.table_id = t.id
+    INNER JOIN payment_methods AS p ON b.payment_id = p.id
+WHERE t.num_seats <= 4
+    AND p.name = 'UPI';
