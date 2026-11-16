@@ -39,3 +39,7 @@ SELECT ROUND(AVG(amount_tipped), 2) AS avg_tipped
 FROM bookings
 WHERE amount_billed >= 1800
     AND num_guests >= 4;
+SELECT MAX(b.num_guests) AS max_guests,
+    MAX(t.num_seats) AS max_seats
+FROM bookings AS b
+    INNER JOIN tables as t ON b.table_id = t.id;
