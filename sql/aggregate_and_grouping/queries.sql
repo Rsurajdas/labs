@@ -35,3 +35,7 @@ FROM bookings;
 SELECT ROUND(AVG(amount_billed), 2),
     ROUND(AVG(amount_tipped), 2)
 FROM bookings;
+SELECT ROUND(AVG(amount_tipped), 2) AS avg_tipped
+FROM bookings
+WHERE amount_billed >= 1800
+    AND num_guests >= 4;
