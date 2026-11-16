@@ -18,3 +18,6 @@ FROM bookings;
 SELECT MIN(category),
     MAX(category)
 from tables;
+SELECT MIN(booking_date) AS start_date,
+    MAX(booking_date) AS end_date
+FROM bookings;
