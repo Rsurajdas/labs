@@ -46,3 +46,7 @@ FROM bookings AS b
     INNER JOIN payment_methods AS p ON b.payment_id = p.id
 WHERE t.num_seats <= 4
     AND p.name = 'UPI';
+SELECT booking_date,
+    SUM(num_guests) AS no_guests
+FROM bookings
+GROUP BY booking_date;
