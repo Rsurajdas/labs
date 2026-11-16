@@ -21,3 +21,17 @@ from tables;
 SELECT MIN(booking_date) AS start_date,
     MAX(booking_date) AS end_date
 FROM bookings;
+SELECT *
+FROM bookings;
+SELECT SUM(amount_billed),
+    SUM(amount_tipped)
+FROM bookings;
+SELECT AVG(amount_billed),
+    AVG(amount_tipped)
+FROM bookings;
+SELECT ROUND(AVG(amount_billed)),
+    ROUND(AVG(amount_tipped))
+FROM bookings;
+SELECT ROUND(AVG(amount_billed), 2),
+    ROUND(AVG(amount_tipped), 2)
+FROM bookings;
