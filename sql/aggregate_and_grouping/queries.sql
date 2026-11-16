@@ -10,3 +10,11 @@ SELECT COUNT(*)
 FROM payment_methods;
 SELECT COUNT(*)
 FROM tables;
+SELECT MAX(num_seats)
+FROM tables;
+SELECT MAX(amount_billed),
+    MIN(amount_tipped)
+FROM bookings;
+SELECT MIN(category),
+    MAX(category)
+from tables;
