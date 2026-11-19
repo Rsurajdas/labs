@@ -49,3 +49,25 @@ VALUES (2, 99, 3);
 -- (ii) Fail: unique constraint "reviews_pkey"
 -- (iii) Fail: check constraint "reviews_rating_check"
 -- (iv) Fail: foreign key constraint "reviews_book_id_fkey"
+-- Q#05
+ALTER TABLE loans
+ADD CONSTRAINT chk_returned_after_loaned CHECK (returned_on > loaned_on);
+ALTER TABLE loans
+ADD CONSTRAINT chk_fine_not_negative CHECK (fine >= 0);
+ALTER TABLE loans
+ADD COLUMN due_on DATE;
+-- 5.4a: It won't violate the `chk_returned_after_loaned` constraint because it only checks whether returned_on is later than loaned_on.
+-- 5.4b: This will throw a `chk_returned_after_loaned` check constraint violation error.
+-- Q#06
+SELECT l.id AS id,
+    m.full_name AS full_name,
+    b.title AS title,
+    br.name AS branch_name,
+    l.loaned_on AS loaned_on
+FROM loans AS l
+    INNER JOIN members AS m ON l.member_id = m.id
+    INNER JOIN books AS b ON l.book_id = b.id
+    LEFT JOIN branches AS br ON m.home_branch_id = br.id
+WHERE l.returned_on IS NULL
+ORDER BY l.loaned_on DESC,
+    l.id ASC;
