@@ -71,3 +71,10 @@ FROM loans AS l
 WHERE l.returned_on IS NULL
 ORDER BY l.loaned_on DESC,
     l.id ASC;
+-- Q#07a
+SELECT b.title AS title,
+    b.isbn AS isbn
+FROM books AS b
+    LEFT JOIN loans AS l ON b.id = l.book_id
+WHERE l.book_id IS NULL
+ORDER BY title ASC;
