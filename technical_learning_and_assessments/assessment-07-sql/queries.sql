@@ -78,3 +78,10 @@ FROM books AS b
     LEFT JOIN loans AS l ON b.id = l.book_id
 WHERE l.book_id IS NULL
 ORDER BY title ASC;
+-- Q#7b
+SELECT m.full_name AS full_name
+FROM members AS m
+    LEFT JOIN loans AS l ON m.id = l.member_id
+    AND l.returned_on IS NULL
+WHERE l.member_id IS NULL
+ORDER BY full_name ASC;
