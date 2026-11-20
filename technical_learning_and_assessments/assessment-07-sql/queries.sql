@@ -99,3 +99,12 @@ WHERE ba.author_id = (
     )
 ORDER BY full_name ASC;
 -- Without DISTINCT, qyery will reture one row per matching record
+SELECT SUM(l.fine) AS total_fines,
+    ROUND(AVG(l.fine), 2) AS avg_fine,
+    COUNT(l.fine) AS fined_loans,
+    MIN(l.loaned_on) AS first_loan,
+    MAX(l.returned_on) AS last_return
+FROM loans AS l
+    LEFT JOIN members AS m ON l.member_id = m.id
+    INNER JOIN branches AS b ON m.home_branch_id = b.id
+WHERE b.name = 'Indiranagar';
