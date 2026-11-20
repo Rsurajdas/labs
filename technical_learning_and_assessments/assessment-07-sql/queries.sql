@@ -98,3 +98,4 @@ WHERE ba.author_id = (
         WHERE name = 'R. K. Narayan'
     )
 ORDER BY full_name ASC;
+-- Without DISTINCT, qyery will reture one row per matching record
