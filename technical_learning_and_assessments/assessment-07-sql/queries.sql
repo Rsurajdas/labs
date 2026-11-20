@@ -85,3 +85,16 @@ FROM members AS m
     AND l.returned_on IS NULL
 WHERE l.member_id IS NULL
 ORDER BY full_name ASC;
+-- Q#8
+SELECT DISTINCT m.full_name AS full_name,
+    m.email AS email
+FROM members AS m
+    INNER JOIN loans AS l ON m.id = l.member_id
+    INNER JOIN books AS b ON l.book_id = b.id
+    INNER JOIN book_authors AS ba ON b.id = ba.book_id
+WHERE ba.author_id = (
+        SELECT id
+        FROM authors
+        WHERE name = 'R. K. Narayan'
+    )
+ORDER BY full_name ASC;
