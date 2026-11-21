@@ -50,3 +50,9 @@ SELECT booking_date,
     SUM(num_guests) AS no_guests
 FROM bookings
 GROUP BY booking_date;
+SELECT booking_date,
+    COUNT(booking_date),
+    SUM(amount_billed)
+FROM bookings
+GROUP BY booking_date
+HAVING SUM(amount_billed) >= 2599;
