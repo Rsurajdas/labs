@@ -141,7 +141,7 @@ WHERE l.returned_on IS NULL;
 SELECT full_name
 FROM current_borrowers
 ORDER BY full_name ASC;
--- Q#13
+-- Q#13a
 UPDATE loans
 SET returned_on = '2026-11-16'
 WHERE member_id IN (
@@ -150,4 +150,13 @@ WHERE member_id IN (
         WHERE email = 'rahul@mail.in'
     )
     AND returned_on is NULL;
--- query updates 2 rows
+-- The SQL query updates 2 rows
+-- Q#13b
+DELETE FROM members
+WHERE home_branch_id IS NULL
+    OR id IN (
+        SELECT member_id
+        FROM loans
+        WHERE member_id IS NULL
+    );
+-- The SQL query will delete 2 rows, and the name of the members are Priya Das and Sameer Khan
