@@ -78,14 +78,14 @@ FROM books AS b
     LEFT JOIN loans AS l ON b.id = l.book_id
 WHERE l.book_id IS NULL
 ORDER BY title ASC;
--- Q#7b
+-- Q#07b
 SELECT m.full_name AS full_name
 FROM members AS m
     LEFT JOIN loans AS l ON m.id = l.member_id
     AND l.returned_on IS NULL
 WHERE l.member_id IS NULL
 ORDER BY full_name ASC;
--- Q#8
+-- Q#08
 SELECT DISTINCT m.full_name AS full_name,
     m.email AS email
 FROM members AS m
@@ -99,7 +99,7 @@ WHERE ba.author_id = (
     )
 ORDER BY full_name ASC;
 -- Without DISTINCT, qyery will reture one row per matching record
--- Q#9
+-- Q#09
 SELECT title,
     genre,
     price
