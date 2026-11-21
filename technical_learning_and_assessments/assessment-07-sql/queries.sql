@@ -123,3 +123,11 @@ FROM loans AS l
     LEFT JOIN members AS m ON l.member_id = m.id
     INNER JOIN branches AS b ON m.home_branch_id = b.id
 WHERE b.name = 'Indiranagar';
+-- Q#11
+SELECT genre,
+    COUNT(genre) AS book_count
+FROM books
+GROUP BY genre
+ORDER BY genre ASC;
+-- Q#11a: My SQL query returns 4 rows, one row for each `genre`, row with empty genre represent as `NULL`
+-- Q#11b: The NULL row count is 0 because the `COUNT()` function only counts non-NULL values in the specified column.
