@@ -63,3 +63,15 @@ FROM (
         FROM bookings
         GROUP BY booking_date
     );
+-- WINDOW vs GROUP BY
+-- GROUP BY -> GROUP BY calculates something for a group and returns one row per group.
+-- WINDOW -> WINDOW FUNCTION calculates something across a group of rows but preserves every individual row.
+SELECT booking_date,
+    SUM(amount_billed) AS total_amount
+FROM bookings
+GROUP BY booking_date;
+SELECT booking_date,
+    amount_tipped,
+    amount_billed,
+    SUM(amount_billed) OVER(PARTITION BY booking_date) AS total_amount
+FROM bookings;
