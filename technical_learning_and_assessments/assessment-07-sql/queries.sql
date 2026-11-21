@@ -99,6 +99,21 @@ WHERE ba.author_id = (
     )
 ORDER BY full_name ASC;
 -- Without DISTINCT, qyery will reture one row per matching record
+-- Q#9
+SELECT title,
+    genre,
+    price
+FROM books
+WHERE price > (
+        SELECT AVG(price)
+        FROM books
+    )
+    AND (
+        genre != 'Fiction'
+        OR genre IS NULL
+    )
+ORDER BY price DESC;
+-- Q#10
 SELECT SUM(l.fine) AS total_fines,
     ROUND(AVG(l.fine), 2) AS avg_fine,
     COUNT(l.fine) AS fined_loans,
