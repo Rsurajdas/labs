@@ -131,3 +131,13 @@ GROUP BY genre
 ORDER BY genre ASC;
 -- Q#11a: My SQL query returns 4 rows, one row for each `genre`, row with empty genre represent as `NULL`
 -- Q#11b: The NULL row count is 0 because the `COUNT()` function only counts non-NULL values in the specified column.
+-- Q#12
+CREATE VIEW current_borrowers AS
+SELECT DISTINCT full_name,
+    phone
+FROM members AS m
+    LEFT JOIN loans AS l ON m.id = l.member_id
+WHERE l.returned_on IS NULL;
+SELECT full_name
+FROM current_borrowers
+ORDER BY full_name ASC;
