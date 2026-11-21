@@ -141,3 +141,13 @@ WHERE l.returned_on IS NULL;
 SELECT full_name
 FROM current_borrowers
 ORDER BY full_name ASC;
+-- Q#13
+UPDATE loans
+SET returned_on = '2026-11-16'
+WHERE member_id IN (
+        SELECT id
+        FROM members
+        WHERE email = 'rahul@mail.in'
+    )
+    AND returned_on is NULL;
+-- query updates 2 rows
