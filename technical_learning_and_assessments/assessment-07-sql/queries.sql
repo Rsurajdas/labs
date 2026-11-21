@@ -160,3 +160,19 @@ WHERE home_branch_id IS NULL
         WHERE member_id IS NULL
     );
 -- The SQL query will delete 2 rows, and the name of the members are Priya Das and Sameer Khan
+-- Q#15
+CREATE TABLE staff (
+    id SERIAL PRIMARY KEY,
+    employee_code VARCHAR(10) NOT NULL UNIQUE,
+    full_name VARCHAR(80) NOT NULL,
+    branch_id INT REFERENCES branches(id) ON DELETE RESTRICT,
+    manager_id INT REFERENCES staff ON DELETE
+    SET NULL,
+        hourly_rate NUMERIC(6, 2) NOT NULL CHECK (hourly_rate > 0) DEFAULT 0,
+        joined_on DATE DEFAULT CURRENT_DATE
+);
+CREATE TABLE staff_skills (
+    id SERIAL PRIMARY KEY,
+    staff_code VARCHAR(10) REFERENCES staff(employee_code) ON DELETE CASCADE,
+    skill VARCHAR(40) NOT NULL UNIQUE
+);
