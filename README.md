@@ -13,7 +13,8 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
   - **Backend (`backend/`):** a FastAPI API over `users`, `rooms`, and `bookings` on PostgreSQL, with flat imports (`from database import ...`) like the todo API, plus `models/`, `schemas/`, and `routers/` packages. `config.py` reads secrets from the environment via `pydantic-settings` (`settings.secret_key`/`database_url`, no hardcoded fallback, so a missing variable fails at startup). `security.py` hashes with `bcrypt` and issues 30-minute HS256 JWTs; `dependencies.py` turns a token into the SQLAlchemy `User` (`get_current_user`, `require_admin`, and the `CurrentUser`/`AdminUser` aliases). `POST /auth/register` returns 409 on a duplicate username/email, room management is admin-only, bookings are owner-scoped (403/404/409/204), and `Booking.room_id`/`user_id` cascade on delete.
   - **Frontend (`frontend/`):** React 19 + `react-router-dom` v7 (declarative `<Routes>`) + typed `axios`, no context. Shared types in `types.ts` (including a generic `FetchState<T>` discriminated union), a typed API client in `api.ts` (axios generics plus a `getErrorMessage` helper), a `Layout` with `NavLink`s and `<Outlet />`, a protected `/bookings` route, and pages for the room list (`useMemo` filtering), room detail (URL params + booking form), my bookings (fetch-with-cleanup + cancel), and login.
   - The code here is the submission, with post-grading fixes applied — the frontend route/hook fixes are in (logout navigation, room-id validation, the `MyBookingsPage` rewrite), and the backend fixes are in too (`algorithms` passed as a list in `get_current_user`, `GET /bookings` admin scoping, a room-existence check before booking, and the stray `from turtle import st` import removed from `routers/bookings.py`).
-- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `technical_learning_and_assessments/` (including the full-stack Assessment #06, a complete project of its own under `assessment-06-fullstack/`); the other project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
+- **Self-assessments:** graded question sets to check what has stuck. Each has a `Questions.md`, my answer files, and an `Answers.md` evaluation report with an explanation for every question (see [Assessments](#assessments)). Most live in `technical_learning_and_assessments/` (including the full-stack Assessment #06 under `assessment-06-fullstack/` and the PostgreSQL library Assessment #07 under `assessment-07-sql/`); the other project-based ones live inside the project they cover — Assessment #04 in `fastapi/assessment-04-expense-tracker/` and Assessment #05 in `typescript/assessment-05-react-ts/`.
+- **SQL library database (Assessment #07):** `technical_learning_and_assessments/assessment-07-sql/` is a PostgreSQL schema (`library_setup.sql`) of `branches`, `members`, `authors`, `books`, a `book_authors` junction table, and `loans`, with a mix of `ON DELETE SET NULL`/`CASCADE`/no-clause and deliberate `NULL`s in the seed data. The 15 questions (`07-sql.md`) range over pagination, aggregate and `ON DELETE` output prediction, NULL-safe filtering, `CREATE`/`ALTER TABLE` constraints, `INNER`/`LEFT JOIN` and unmatched records, many-to-many with `DISTINCT`, subquery filters, single-column `GROUP BY`, a view, and `UPDATE`/`DELETE` with subqueries. `queries.sql` holds the submitted answers (Q1–Q13 and Q15) and `07-sql-result.md` the evaluation (see [Assessments](#assessments)).
 - **SQL aggregates & grouping:** `sql/aggregate_and_grouping/` is a new `restaurants` schema split across three files (`create_queries.sql`, `insert_queries.sql`, `queries.sql`) with `payment_methods`, `tables`, and a `bookings` fact table (`NUMERIC(6, 2)` money columns, a nullable `amount_tipped`, and `payment_id`/`table_id` foreign keys). `queries.sql` now works through the aggregate functions: `COUNT(*)` vs `COUNT(column)` (which skips the `NULL` tips) and `COUNT(DISTINCT booking_date)`; `MIN`/`MAX` over numbers, text categories, and dates (with `AS start_date`/`end_date` aliases); `SUM` and `AVG`, then `ROUND(AVG(...))` and `ROUND(AVG(...), 2)` for precision; a filtered `AVG` with a `WHERE` on `amount_billed`/`num_guests`; a `MAX` over `bookings ⋈ tables ⋈ payment_methods` INNER JOINs filtered by seats and payment method; and a first `GROUP BY booking_date` summing guests per day.
 - **SQL many-to-many:** a company schema (`sql/relations_company.sql`) with `buildings → teams → employees`, a `projects_employees` junction table with a composite primary key (`employee_id`, `project_id`), a self-referencing foreign key (`employees.supervisor_id → employees.id`) for the reporting hierarchy, `ON DELETE SET NULL` vs `ON DELETE CASCADE`, and a foreign key that references a `UNIQUE` non-PK column (`internet_accounts.email → employees.email`).
 - **Advanced React + TypeScript:** a second Vite app (`typescript/react-ts-advance/`) that started as a set of wrapper/forwarded-ref components (now under `src/components/UI/`) and grew into a "ReactTimer" app reusing them, with a Context + `useReducer` store.
@@ -46,6 +47,7 @@ Each set is answered without running the code first, then graded. The scores are
 | 04 | 2026-10-31 | FastAPI: expense tracker (SQLAlchemy, Pydantic, auth) | 4 / 12 (33%) |
 | 05 | 2026-11-01 | React + TypeScript: workshop registration app         | 3 / 12 (25%) |
 | 06 | 2026-11-12 | Full stack: FastAPI + React/TS room booking           | 4 / 12 (33%) |
+| 07 | 2026-11-16 | PostgreSQL: library database (joins, aggregates, DDL) | 4 / 15 (27%) |
 
 Where points were lost:
 
@@ -55,6 +57,7 @@ Where points were lost:
 - **#04:** auth (bcrypt/login/JWT) went 0/3, plus `NULL`/optional handling, missed status codes, and `ON DELETE` behaviour. Most answers were almost right but missed a single stated requirement — the same pattern as #01.
 - **#05:** first dedicated React assessment. The architecture was right almost everywhere; the marks went on spread/prop order, how `&&` renders a falsy `0`, which element an attribute belongs on, validating `FormData` values, and React 18 event types (`SubmitEvent` doesn't exist). 7 of the 8 wrong answers had the right structure but missed a stated detail — the same requirement-completeness pattern as #01 and #04.
 - **#06:** first full-stack assessment (backend and frontend together). The structure was right almost everywhere; the marks went on auth failure paths (`None` vs `return None`, a missing `is_active` check, `algorithms` passed as a string not a list), existence checks before insert (checking `is None` on a required field instead of querying the DB), the Rules of Hooks (an early return before `useEffect`) and `useMemo` deps, a missing `api.post<Booking>` axios generic, and HTTP response prediction (unanswered again, as in #04). 6 of the 7 wrong answers had the right shape but missed a stated detail — the same requirement-completeness pattern as #01, #04, and #05.
+- **#07:** first standalone SQL assessment since #03, and much broader (aggregates, views, DDL debugging, `ON DELETE` prediction). The SQL itself was mostly right — Q4, Q8 and Q15 lost the mark on the written part alone, so counting just whether the code met the requirements it was closer to 8/14. The losses were requirement completeness for the fifth assessment running: blank output predictions (Q2 and Q14), skipped sub-requirements (a missing bug list, an unanswered insert outcome, a missing row count), a `LEFT JOIN` where an `INNER JOIN` was needed (Q10, Q12), and boundary slips (`>` vs `>=`, `DESC` vs oldest-first, `OR` vs `AND`). `ON DELETE` has now cost marks in four assessments (#03, #04, #06, #07).
 
 ## Structure
 
@@ -66,13 +69,18 @@ labs/
 │   ├── Assessment #01/            # Mixed topics: Questions.md, answer files, Answers.md report
 │   ├── Assessment #02/            # TypeScript
 │   ├── Assessment #03/            # PostgreSQL company projects database
-│   └── assessment-06-fullstack/   # Full-stack room booking (Assessment #06): FastAPI backend/ + React frontend/
-│       ├── ASSESSMENT.md          # Brief (12 questions: 6 backend, 6 frontend)
-│       ├── ANSWERS.md             # Written answers
-│       ├── RESULT.md              # Evaluation report (4/12)
-│       ├── learning-scope.md      # Topic scope snapshot
-│       ├── backend/               # FastAPI API: config.py, security.py, dependencies.py, seed.py, models/, schemas/, routers/
-│       └── frontend/              # React 19 + Vite: api.ts, types.ts, components/ (Layout), pages/ (Rooms, RoomDetail, MyBookings, Login)
+│   ├── assessment-06-fullstack/   # Full-stack room booking (Assessment #06): FastAPI backend/ + React frontend/
+│   │   ├── ASSESSMENT.md          # Brief (12 questions: 6 backend, 6 frontend)
+│   │   ├── ANSWERS.md             # Written answers
+│   │   ├── RESULT.md              # Evaluation report (4/12)
+│   │   ├── learning-scope.md      # Topic scope snapshot
+│   │   ├── backend/               # FastAPI API: config.py, security.py, dependencies.py, seed.py, models/, schemas/, routers/
+│   │   └── frontend/              # React 19 + Vite: api.ts, types.ts, components/ (Layout), pages/ (Rooms, RoomDetail, MyBookings, Login)
+│   └── assessment-07-sql/         # PostgreSQL library database (Assessment #07): 15 questions
+│       ├── 07-sql.md              # Brief (15 questions) + the library_setup.sql schema and seed data
+│       ├── library_setup.sql      # branches, members, authors, books, book_authors, loans + seed
+│       ├── queries.sql            # Submitted answers (Q1–Q13, Q15)
+│       └── 07-sql-result.md       # Evaluation report (4/15)
 ├── fastapi/                       # FastAPI projects, one per folder
 │   ├── README.md
 │   ├── books/                     # Books API, built twice
@@ -241,6 +249,13 @@ createdb -U postgres restaurants
 psql -U postgres -d restaurants -f sql/aggregate_and_grouping/create_queries.sql
 psql -U postgres -d restaurants -f sql/aggregate_and_grouping/insert_queries.sql
 psql -U postgres -d restaurants -f sql/aggregate_and_grouping/queries.sql
+
+# Library database (Assessment #07; PostgreSQL, SERIAL keys). Load the schema on an EMPTY database.
+createdb -U postgres library_07
+psql -U postgres -d library_07 -f technical_learning_and_assessments/assessment-07-sql/library_setup.sql
+# queries.sql holds the per-question answers; run them one question at a time, not end to end
+# (Q4/Q5 alter the schema and Q13 changes data). Reload between those with:
+# dropdb -U postgres library_07 && createdb -U postgres library_07 && psql -U postgres -d library_07 -f .../library_setup.sql
 ```
 
 ## Adding a new topic
