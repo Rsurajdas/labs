@@ -4,7 +4,7 @@ import { fetchPosts } from "./api";
 import { PostDetail } from "./PostDetail";
 import type { Post } from "./types";
 import { useQuery } from "@tanstack/react-query";
-const maxPostPage = 20;
+const maxPostPerPage = 20;
 
 export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -12,7 +12,7 @@ export function Posts() {
 
   const { data, isError, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", currentPage],
-    queryFn: () => fetchPosts(maxPostPage, currentPage + 1),
+    queryFn: () => fetchPosts(maxPostPerPage, currentPage + 1),
     staleTime: 2000,
   });
 
