@@ -9,10 +9,26 @@ type PostDetailProps = {
 };
 
 export function PostDetail({ post }: PostDetailProps) {
-  const { data } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: ["comments", post.id],
     queryFn: () => fetchComments(post.id),
   });
+
+  if (isError) {
+    return (
+      <>
+        <h4>Something went wrong!</h4>
+      </>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <h4>Loading...</h4>
+      </>
+    );
+  }
 
   return (
     <>
