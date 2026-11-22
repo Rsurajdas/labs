@@ -10,15 +10,23 @@ export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  const { data, error } = useQuery<Post[]>({
+  const { data, isError, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", currentPage],
     queryFn: () => fetchPosts(maxPostPage, currentPage + 1),
   });
 
-  if (error) {
+  if (isError) {
     return (
       <>
         <h4>Something went wrong!</h4>
+      </>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <h4>Loading...</h4>
       </>
     );
   }
