@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { fetchPosts, deletePost, updatePost } from "./api";
+import { fetchPosts } from "./api";
 import { PostDetail } from "./PostDetail";
 import type { Post } from "./types";
 import { useQuery } from "@tanstack/react-query";
