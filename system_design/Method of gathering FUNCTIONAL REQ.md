@@ -25,6 +25,6 @@ Requirement Fathering Steps:
 
    * Each event contains
 
-     1. **Action**
-     2. **Data**
+     * **Action**
+     * **Data**
 
