@@ -8,6 +8,8 @@ This is a scratchpad, not a portfolio. Code here is written to understand someth
 
 ## Currently working on
 
+- **System design:** `system_design/` is a new topic working through software architecture from a large-scale-systems course (the `Software+Architecture+and+Design+of+Large+Scale+Systems` workbook PDF). Notes so far: an intro defining architecture as the output of the design phase and the input to implementation; the three types of requirements / architectural drivers (functional, non-functional/quality attributes, and system constraints); and methods for gathering functional requirements (use cases → user flows, broken into actor → use case → event with its action and data).
+- **React Query (TanStack Query):** `typescript/blog-em/` is a new Vite + React + TS "Blog 'em Ipsum" app learning data fetching with `@tanstack/react-query`. It wraps the app in a `QueryClientProvider` (plus `ReactQueryDevtools`), lists paginated posts from the JSONPlaceholder API with `useQuery` (typed `Post[]`, `staleTime`, `isLoading`/`isError` states), shows per-post comments in a `PostDetail`, and pre-fetches the next page via `useQueryClient` in a `useEffect` so pagination feels instant. A typed `axios` client in `api.ts` holds the fetch/delete/update calls; Delete/Update buttons are stubbed for now.
 - **Redis basics:** `redis/` is a new topic — a RedisInsight notebook (`my-linear-private-notebook.json`, "Basic Strings") working through string commands: `SET`/`GET`, the inline `GET` option on `SET`, and the `NX` (set only if absent), `XX` (set only if present), and `EX` (expire in seconds) flags. First look at Redis as a key-value store.
 - **Full-stack room-booking app (FastAPI + React/TS):** `technical_learning_and_assessments/assessment-06-fullstack/` is the project behind [Assessment #06](#assessments) — a "Study Room Booking" app where users book study rooms by day and hourly slot. This is the first assessment that spans a backend and a frontend together.
   - **Backend (`backend/`):** a FastAPI API over `users`, `rooms`, and `bookings` on PostgreSQL, with flat imports (`from database import ...`) like the todo API, plus `models/`, `schemas/`, and `routers/` packages. `config.py` reads secrets from the environment via `pydantic-settings` (`settings.secret_key`/`database_url`, no hardcoded fallback, so a missing variable fails at startup). `security.py` hashes with `bcrypt` and issues 30-minute HS256 JWTs; `dependencies.py` turns a token into the SQLAlchemy `User` (`get_current_user`, `require_admin`, and the `CurrentUser`/`AdminUser` aliases). `POST /auth/register` returns 409 on a duplicate username/email, room management is admin-only, bookings are owner-scoped (403/404/409/204), and `Booking.room_id`/`user_id` cascade on delete.
@@ -112,6 +114,11 @@ labs/
 │   └── oop/                       # Classes and inheritance (Enemy, Zombie, Ogre, Weapon)
 ├── redis/                         # Redis practice (RedisInsight notebooks)
 │   └── my-linear-private-notebook.json  # "Basic Strings": SET/GET with NX, XX, EX, inline GET
+├── system_design/                 # System design notes (large-scale systems course)
+│   ├── Intro to software architectrue.md    # Architecture = design output, implementation input
+│   ├── Type of Requirements.md              # Functional, non-functional, constraints
+│   ├── Method of gathering FUNCTIONAL REQ.md # Use cases → user flows → actions + data
+│   └── Software+Architecture+...Workbook.pdf # Course workbook
 ├── rust/                          # Rust course projects
 │   ├── hello_world/
 │   ├── variables-and-mutability/
@@ -142,6 +149,13 @@ labs/
 │   │       ├── App.tsx            # Wraps the app in TimersContextProvider
 │   │       ├── components/        # Header, AddTimer, Timers, Timer + UI/ (Inputs, Button, PolymorphicComponent, Form)
 │   │       └── store/             # timers-context.tsx: createContext + useReducer store
+│   ├── blog-em/                   # React Query (TanStack Query) "Blog 'em Ipsum" app (Vite)
+│   │   └── src/
+│   │       ├── App.tsx            # QueryClientProvider + ReactQueryDevtools
+│   │       ├── Posts.tsx          # Paginated useQuery list + next-page pre-fetch
+│   │       ├── PostDetail.tsx     # useQuery for a post's comments
+│   │       ├── api.ts             # Typed axios client (fetch/delete/update)
+│   │       └── types.ts           # Post, Comment types
 │   └── assessment-05-react-ts/    # Workshop Registration Desk app (Assessment #05)
 │       ├── ASSESSMENT.md          # Assessment #05 brief (12 questions)
 │       ├── ANSWERS.md             # Written answers (Q6, Q7, Q12)
@@ -162,7 +176,8 @@ labs/
 | [`redis/`](./redis)                                                           | Redis basics in RedisInsight notebooks: string commands and set options (NX, XX, EX)                  |
 | [`rust/`](./rust)                                                             | Rust fundamentals: variables, mutability, and data types                                              |
 | [`sql/`](./sql)                                                               | SQL in MySQL and PostgreSQL: schema design, constraints, CRUD, views, JOINs, many-to-many, aggregates |
-| [`typescript/`](./typescript)                                                 | TypeScript types, interfaces, unions, generics, and three React + TS apps                             |
+| [`system_design/`](./system_design)                                           | System design notes: software architecture, requirement types, gathering functional requirements      |
+| [`typescript/`](./typescript)                                                 | TypeScript types, interfaces, unions, generics, and four React + TS apps (incl. React Query)          |
 
 ## Conventions
 
@@ -190,6 +205,7 @@ npx tsc typescript/basic.ts
 cd typescript/rect-ts-basics && npm install && npm run dev
 cd typescript/react-ts-advance && npm install && npm run dev
 cd typescript/assessment-05-react-ts && npm install && npm run dev  # npm run typecheck for tsc --noEmit
+cd typescript/blog-em && npm install && npm run dev                 # React Query app (fetches the JSONPlaceholder API)
 
 # Python
 cd python && python <file>.py
