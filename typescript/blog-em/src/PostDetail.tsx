@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { fetchComments, deletePost, updatePost } from "./api";
 import "./PostDetail.css";
 import type { Post } from "./types";

@@ -13,6 +13,7 @@ export function Posts() {
   const { data, isError, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", currentPage],
     queryFn: () => fetchPosts(maxPostPage, currentPage + 1),
+    staleTime: 2000,
   });
 
   if (isError) {
