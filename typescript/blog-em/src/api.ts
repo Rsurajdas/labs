@@ -6,9 +6,12 @@ export const api = axios.create({
   timeout: 15000,
 });
 
-export async function fetchPosts(pageNum = 1): Promise<Post[]> {
+export async function fetchPosts(
+  maxPostPage: number,
+  pageNum = 1,
+): Promise<Post[]> {
   const response = await api.get<Post[]>(
-    `https://jsonplaceholder.typicode.com/posts?_limit=10&_page=${pageNum}`,
+    `https://jsonplaceholder.typicode.com/posts?_limit=${maxPostPage}&_page=${pageNum}`,
   );
   return response.data;
 }
