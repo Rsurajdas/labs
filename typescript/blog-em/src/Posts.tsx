@@ -49,7 +49,7 @@ export function Posts() {
         </button>
       </div>
       <hr />
-      {selectedPost && <PostDetail post={selectedPost} />}
+      {selectedPost ? <PostDetail post={selectedPost} /> : null}
     </>
   );
 }
