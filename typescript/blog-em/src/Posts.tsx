@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { fetchPosts } from "./api";
 import { PostDetail } from "./PostDetail";
 import type { Post } from "./types";
-import { useQuery } from "@tanstack/react-query";
-const maxPostPerPage = 20;
+import { noop, useQuery, useQueryClient } from "@tanstack/react-query";
+const maxPostPerPage = 5;
 
 export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const queryClient = useQueryClient();
+
+  const preFetchPosts = useCallback(async () => {
+    const nextPage = currentPage + 1;
+    await queryClient
+      .query({
+        queryKey: ["posts", nextPage],
+        queryFn: () => fetchPosts(maxPostPerPage, nextPage),
+      })
+      .catch(noop);
+  }, [currentPage, queryClient]);
+
+  // Pre-fetch next page data
+  useEffect(() => {
+    preFetchPosts();
+  }, [currentPage, queryClient, preFetchPosts]);
 
   const { data, isError, isLoading } = useQuery<Post[]>({
     queryKey: ["posts", currentPage],
