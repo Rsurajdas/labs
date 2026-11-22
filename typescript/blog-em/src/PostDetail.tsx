@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchComments } from "./api";
+import { fetchComments, deletePost, updatePost } from "./api";
 import "./PostDetail.css";
 import type { Post } from "./types";
 
@@ -16,7 +16,8 @@ export function PostDetail({ post }: PostDetailProps) {
   return (
     <>
       <h3 style={{ color: "blue" }}>{post.title}</h3>
-      <button>Delete</button> <button>Update title</button>
+      <button onClick={() => {}}>Delete</button>{" "}
+      <button onClick={() => {}}>Update title</button>
       <p>{post.body}</p>
       <h4>Comments</h4>
       {data?.map((comment) => (
