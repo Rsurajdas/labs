@@ -2,15 +2,13 @@
 
 
 
-1. Feature of the system
+1. Feature of the system  
 
    * Functional requirements
-
-2\. Quality attributes
+2. Quality attributes  
 
    * Non-Functional requirements
-
-3\. System constraints
+3. System constraints  
 
    * Limitations and boundaries
 
