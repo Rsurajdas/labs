@@ -1,5 +1,4 @@
 import { useQuery, type UseMutationResult } from "@tanstack/react-query";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { fetchComments } from "./api";
 import "./PostDetail.css";
 import type { Post } from "./types";
