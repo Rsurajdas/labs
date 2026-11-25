@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { deletePost, fetchPosts } from "./api";
+import { deletePost, fetchPosts, updatePost } from "./api";
 import { PostDetail } from "./PostDetail";
 import type { Post } from "./types";
 import {
@@ -17,6 +17,10 @@ export function Posts() {
   const queryClient = useQueryClient();
   const deleteMutation = useMutation({
     mutationFn: (postId: number) => deletePost(postId),
+  });
+  const updateMutation = useMutation({
+    mutationFn: (postId: number) => updatePost(postId),
+    onSuccess: (data) => setSelectedPost(data),
   });
 
   const preFetchPosts = useCallback(async () => {
@@ -86,7 +90,11 @@ export function Posts() {
       </div>
       <hr />
       {selectedPost ? (
-        <PostDetail post={selectedPost} deleteMutation={deleteMutation} />
+        <PostDetail
+          post={selectedPost}
+          deleteMutation={deleteMutation}
+          updateMutation={updateMutation}
+        />
       ) : null}
     </>
   );
