@@ -1,15 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { fetchPosts } from "./api";
+import { deletePost, fetchPosts } from "./api";
 import { PostDetail } from "./PostDetail";
 import type { Post } from "./types";
-import { noop, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  noop,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 const maxPostPerPage = 5;
 
 export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: (postId: number) => deletePost(postId),
+  });
 
   const preFetchPosts = useCallback(async () => {
     const nextPage = currentPage + 1;
@@ -55,7 +63,10 @@ export function Posts() {
           <li
             key={post.id}
             className="post-title"
-            onClick={() => setSelectedPost(post)}
+            onClick={() => {
+              deleteMutation.reset();
+              setSelectedPost(post);
+            }}
           >
             {post.title}
           </li>
@@ -74,7 +85,9 @@ export function Posts() {
         </button>
       </div>
       <hr />
-      {selectedPost ? <PostDetail post={selectedPost} /> : null}
+      {selectedPost ? (
+        <PostDetail post={selectedPost} deleteMutation={deleteMutation} />
+      ) : null}
     </>
   );
 }
