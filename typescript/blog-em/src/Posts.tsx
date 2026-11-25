@@ -69,6 +69,7 @@ export function Posts() {
             className="post-title"
             onClick={() => {
               deleteMutation.reset();
+              updateMutation.reset();
               setSelectedPost(post);
             }}
           >

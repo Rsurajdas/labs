@@ -47,6 +47,8 @@ export function PostDetail({
         <button onClick={() => updateMutation.mutate(post.id)}>
           Update title
         </button>
+        {updateMutation.isPending ? <p>Updating blog title...</p> : null}
+        {updateMutation.isSuccess ? <p>Title updated</p> : null}
       </div>
       <p>{post.body}</p>
       <h4>Comments</h4>
